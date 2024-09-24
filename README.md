@@ -1,0 +1,1 @@
+# A Community app for IITH. Developed for Milan 2024 - Lambda Hackathon - SN Bose
