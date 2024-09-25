@@ -9,7 +9,6 @@ import TopNav from "./components/Topnav.jsx";
 
 function Layout() {
   return <>
-    <TopNav></TopNav>
     <Outlet />
   </>
 }
