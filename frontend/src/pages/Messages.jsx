@@ -1,4 +1,3 @@
-import TopNav from "../components/Topnav"
 
 export default function Messages() {
 
@@ -94,7 +93,6 @@ export default function Messages() {
 
     return (
         <div className="flex flex-col h-screen">
-            <TopNav></TopNav>
             <div className="flex flex-nowrap flex-grow justify-center h-fit">
                 <div id="contacts_list" className="basis-1/4 bg-gray-200 border-black border-r-2"></div>
                 <div id="message_area" className="flex-grow flex flex-col mt-auto">
