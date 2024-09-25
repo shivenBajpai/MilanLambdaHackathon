@@ -24,6 +24,12 @@ export default function Messages() {
             author: "Me",
             timestamp: 1727180925,
             text: "who r u? oh aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        },
+        {
+            id: 4,
+            author: "user1",
+            timestamp: 1727180926,
+            text: "who r u? oh dwadad",
         }
     ];
 
@@ -31,7 +37,9 @@ export default function Messages() {
         return (
             <div className={"m-2 flex" + (message.author == User ? " justify-end" : " justify-begin")}>
                 {message.author != User && <img className="w-10 h-10 mr-2" src="/profile.png"></img>}
-                <p className={"mr-5 mt-1 mb-1 p-2 rounded-md text-left font-normal text-md max-w-96 break-words" + (message.author == User ? " bg-red-300" : " bg-gray-300")}>{message.author!=User && <div><span className="text-red-600 font-bold">{message.author+":"}</span><br></br></div>}{message.text}</p>
+                <p className={"mr-5 mt-1 mb-1 p-2 rounded-md text-left font-normal text-md max-w-96 break-words" + (message.author == User ? " bg-red-300" : " bg-gray-300")}>
+                    {message.author!=User && <div><span className="text-red-600 font-bold">{message.author+":"}</span><br></br></div>}{message.text}
+                </p>
             </div>
         )
     })
