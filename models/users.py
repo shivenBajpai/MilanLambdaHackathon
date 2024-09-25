@@ -70,7 +70,7 @@ def create_users():
 
 #func to add User
 
-def add_users(userDetails:dict):
+def add_user(userDetails:dict):
 
     try:
         inserted_record = users.insert_one(userDetails)
@@ -121,3 +121,19 @@ def update_user(id, field, new_value):
     })
 
     return users.find_one({"_id":id})
+
+def delete_user(id):
+
+    user = users.find_one({
+        "_id" : id
+    })
+
+    if(not user):
+        exception = f"Couldn't find any user with id: {id}"
+        raise Exception(exception)
+
+    users.delete_one({
+        "_id": id
+    })
+
+    return 1
