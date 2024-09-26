@@ -15,10 +15,10 @@ export default function createMessageComponenets(messages) {
         let timeThis = (i != messages.length - 1) ? DtFormat.format(messages[i+1].timestamp) : timeNext = DtFormat.format(messages[i].timestamp)
         if (messages[i].author == User) {
             messageElements.push(
-                <div class={"col-start-6 col-end-13 rounded-lg" + spacing}>
-                    <div class="flex items-center justify-start flex-row-reverse">
+                <div className={"col-start-6 col-end-13 rounded-lg" + spacing}>
+                    <div className="flex items-center justify-start flex-row-reverse">
                         <div
-                            class="relative mr-3 text-md bg-red-300 py-2 px-4 shadow rounded-xl"
+                            className="relative mr-3 text-md bg-red-300 py-2 px-4 shadow rounded-xl"
                         >
                             <div>{messages[i].text}
                                 {((timeNext != timeThis) || messages[i+1]?.author != User) && (
@@ -38,13 +38,13 @@ export default function createMessageComponenets(messages) {
             }
             const topUser = (i != (messages.length-1) && ((messages[i].author == messages[i+1].author) && messages[i].author != messages[i-1].author) || (messages[i-1].author == User))
             messageElements.push(
-                <div class={"col-start-1 col-end-8 rounded-lg" + spacing + margin}>
+                <div className={"col-start-1 col-end-8 rounded-lg" + spacing + margin}>
                     <div className="flex flex-col">
                         {topUser && <div className="font-bold ml-14 text-red-500">{messages[i].author + ":"}</div>}
-                        <div class="flex flex-row items-center">
+                        <div className="flex flex-row items-center">
                         {topUser && <img className="flex items-center justify-center h-10 w-10 rounded-full bg-red-500 flex-shrink-0" src="/profile.png"></img>}
                         <div
-                            class="relative ml-3 text-md bg-white py-2 px-4 shadow rounded-xl"
+                            className="relative ml-3 text-md bg-white py-2 px-4 shadow rounded-xl"
                         >
                             <div>{messages[i].text}
                                 {((timeNext != timeThis) || messages[i+1]?.author == User) && (
