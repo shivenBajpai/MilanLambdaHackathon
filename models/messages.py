@@ -15,6 +15,9 @@ db = client.Main_DB
 messages = db.messages
 users = db.users
 
+class NotFoundError(Exception):
+    pass
+
 # Send a ping to confirm a successful connection
 
 try:
@@ -82,12 +85,12 @@ def add_message(messageDetails:dict):
 
     if((not user1) or (not user2)):
         exception = "Either one or both users not found in users collection"
-        raise Exception(exception)
+        raise NotFoundError(exception)
     
     if(user1 == user2):
         exception = "Both User ids are same"
         raise Exception(exception)
-    
+  
     messageDetails["from_id"] = ObjectId(messageDetails["from_id"])
     messageDetails["to_id"] = ObjectId(messageDetails["to_id"])
 
@@ -120,7 +123,7 @@ def get_message(from_id, to_id):
 
     if(len(message_list) == 0):
         exception = f"Couldn't find any messages between user1:{from_id} and user2:{to_id}"
-        raise Exception(exception)
+        raise NotFoundError(exception)
     
     message_list_sorted = sorted(message_list, key=lambda d:d['timestamp'])
 
@@ -141,7 +144,7 @@ def update_message(id, new_message):
 
     if(not message):
         exception = f"Couldn't find any message with id: {id}"
-        raise Exception(exception)
+        raise NotFoundError(exception)
     
     messages.update_one({
         "_id": ObjectId(id)
@@ -162,7 +165,7 @@ def delete_message(id):
 
     if(not message):
         exception = f"Couldn't find any message with id: {id}"
-        raise Exception(exception)
+        raise NotFoundError(exception)
 
     messages.delete_one({
         "_id": ObjectId(id)

@@ -37,6 +37,7 @@ def authorize():
     google = oauth.create_client('google')
     token = google.authorize_access_token()
     user = token.get('userinfo') # This is the dict for userinfo
-    return redirect('/messages')
+    resp = redirect('/messages')
+    return resp
     #user will return a dict of info like: email = user.get("email")
     #Save the user info to database and login the user
