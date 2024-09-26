@@ -47,6 +47,13 @@ users_Schema = {
             "OAuth": {
                 "bsonType": "string",
                 "description": "Must be an OAuth token"
+            },
+            "contacts": {
+                "bsonType": "array",
+                "items": {
+                    "bsonType": "objectID",
+                    "description": "It's the id of the users, the Current User has a DM open with."
+                }
             }
         }
     }

@@ -50,3 +50,40 @@ anon_Schema = {
 
 #CRUD FUNCTIONS
 
+#CREATE ANON COLLECTION
+
+def create_anon():
+
+    if(anon_convos != None):
+        return "Already Exists"
+    
+    try:
+        db.create_collection("anon")
+    except Exception as e:
+        raise Exception(e)
+    
+    db.command("collMod", "anon", validator=anon_Schema)
+
+    return anon_Schema["$jsonSchema"]["properties"].keys()
+
+#ADD ANON ENTRY
+
+def add_anon(anon_details:dict):
+
+    user1 = users.find_one({
+        "_id": ObjectId(anon_details["from_id"])
+    })
+
+    user2 = users.find_one({
+        "_id": ObjectId(anon_details["to_id"])
+    })
+
+    if((not user1) or (not user2)):
+        exception = "Either one or both users not found in users collection"
+        raise Exception(exception)
+    
+    if(user1 == user2):
+        exception = "Both User ids are same"
+        raise Exception(exception)
+
+    

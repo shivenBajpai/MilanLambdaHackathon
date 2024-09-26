@@ -81,7 +81,7 @@ def add_message(messageDetails:dict, anon:bool):
     })
 
     user2 = users.find_one({
-        "_id": ObjectId(messageDetails["from_id"])
+        "_id": ObjectId(messageDetails["to_id"])
     })
 
     if((not user1) or (not user2)):
@@ -96,6 +96,7 @@ def add_message(messageDetails:dict, anon:bool):
     
     messageDetails["from_id"] = ObjectId(messageDetails["from_id"])
     messageDetails["to_id"] = ObjectId(messageDetails["to_id"])
+    messageDetails["timestamp"] = datetime.now()
 
     try:
         inserted_record = messages.insert_one(messageDetails)
@@ -163,6 +164,9 @@ def delete_message(id):
     if(not message):
         exception = f"Couldn't find any message with id: {id}"
         raise Exception(exception)
+    
+    # if(message["anon"]):
+        
 
     messages.delete_one({
         "_id": ObjectId(id)
