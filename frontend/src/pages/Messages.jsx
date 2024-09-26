@@ -1,16 +1,36 @@
+import AnonymousChat from "../components/AnonymousChat"
+import React from "react"
+import craeteMessageComponents from "../util/util"
+import createMessageComponenets from "../util/util"
 
 export default function Messages() {
 
     const User = "Me"
     let activeDMS = 1
 
-    const DtFormat = Intl.DateTimeFormat(undefined, {
-        hour12: true,
-        timeStyle: "short"
-    })
-
     // Should be given as json ordered according to timestamp
-    let messages = [
+    const contacts = [
+        {   id: 2,
+            username: "Shivaram"
+        },
+        {   id: 3,
+            username: "Aric"
+        },
+        {   id: 2,
+            username: "Shivaram"
+        },
+        {   id: 3,
+            username: "Aric"
+        },
+        {   id: 2,
+            username: "Shivaram"
+        },
+        {   id: 3,
+            username: "Aric"
+        },
+    ]
+
+    const messages = [
         {
             id: 2,
             author: "Me",
@@ -153,49 +173,34 @@ export default function Messages() {
     //     }
     // })
 
-    let newMessageElements = []
-    for (let i = 0; i<messages.length; i++) {
-        let spacing = " mt-2"
-        if (i != 0 && (messages[i-1].author == messages[i].author)) {
-            spacing = " mt-0.5"
-        }
-        if (messages[i].author == User) {
-            newMessageElements.push(
-                <div class={"col-start-6 col-end-13 rounded-lg" + spacing}>
-                    <div class="flex items-center justify-start flex-row-reverse">
-                    <div
-                        class="relative mr-3 text-md bg-red-300 py-2 px-4 shadow rounded-xl"
-                    >
-                        <div>{messages[i].text}</div>
-                    </div>
-                    </div>
-                </div>
-            )
+    const newMessageElements = createMessageComponenets(messages)
 
-        } else {
-            let margin = " ml-10"
-            if (i != (messages.length-1) && ((messages[i].author == messages[i+1].author) && messages[i].author != messages[i-1].author) || (messages[i-1].author == User)) {
-                margin = ""
-            }
-            newMessageElements.push(
-                <div class={"col-start-1 col-end-8 rounded-lg" + spacing + margin}>
-                    <div class="flex flex-row items-center">
-                    {(i != (messages.length-1) && ((messages[i].author == messages[i+1].author) && messages[i].author != messages[i-1].author) || (messages[i-1].author == User)) && (
-                        <img className="flex items-center justify-center h-10 w-10 rounded-full bg-red-500 flex-shrink-0" src="/profile.png"></img>
-                    )}
-                    <div
-                        class="relative ml-3 text-md bg-white py-2 px-4 shadow rounded-xl"
-                    >
-                        <div>{messages[i].text}</div>
-                    </div>
-                    </div>
-                </div>
-            )
-        }
+    const contactElements = contacts.map((contact) => {
+        return (
+            <button
+                class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
+            >
+                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-red-500 flex-shrink-0" src="/profile.png"></img>
+                <div class="ml-2 text-sm font-semibold">{contact.username}</div>
+                {/* Unread messages */}
+                {/* <div
+                class="flex items-center justify-center ml-auto text-xs text-white bg-red-500 h-4 w-4 rounded leading-none"
+                >
+                2
+                </div> */}
+            </button>
+        )
+    })
+
+    function newRandomChat() {
+        toggleAnonymousChatOpen(true)
     }
+
+    const [AnonymousChatOpen, toggleAnonymousChatOpen] = React.useState(false)
 
     return (
         <div class="flex h-screen antialiased text-gray-900">
+            {AnonymousChatOpen && <AnonymousChat close={toggleAnonymousChatOpen}></AnonymousChat>}
             <div class="flex flex-row h-full w-full overflow-x-hidden">
               <div class="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
                 <div class="flex flex-row items-center justify-center h-12 w-full">
@@ -225,26 +230,15 @@ export default function Messages() {
                     {/* Number of active dms of the user */}
                     <span
                       class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full"
-                      >{activeDMS}</span
+                      >{contacts.length}</span
                     >
                   </div>
                   {/* User profiles */}
-                  <div class="flex flex-col space-y-1 mt-4 -mx-2 h-48 overflow-y-auto">
-                    <button
-                      class="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
-                    >
-                      <img className="flex items-center justify-center h-8 w-8 rounded-full bg-red-500 flex-shrink-0" src="/profile.png"></img>
-                      <div class="ml-2 text-sm font-semibold">Shivaram</div>
-                      {/* Unread messages */}
-                      <div
-                        class="flex items-center justify-center ml-auto text-xs text-white bg-red-500 h-4 w-4 rounded leading-none"
-                      >
-                        2
-                      </div>
-                    </button>
+                  <div class="flex flex-col space-y-1 mt-4 -mx-2 h-64 overflow-y-auto scrollbar-red">
+                    {contactElements}
                   </div>
                   {/* Button to chat with random person */}
-                  <button class="flex items-center justify-center bg-red-500 hover:bg-red-600 rounded-xl text-white px-4 py-4 font-bold flex-shrink-0 mt-4">
+                  <button onClick={() => newRandomChat()} class="flex items-center justify-center bg-red-500 hover:bg-red-600 rounded-xl text-white px-4 py-4 font-bold flex-shrink-0 mt-4">
                         <span>Meet a stranger</span>
                     </button>
                 </div>
