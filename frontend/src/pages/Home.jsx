@@ -22,17 +22,17 @@ export default function Home() {
             <h1 className="font-black text-4xl" >Features</h1>
             <div className="grid grid-cols-3 gap-3 mt-8">
                 <div className="flex flex-col content-center">
-                    <MessageCircle className="mx-auto h-16 w-16 text-primary" />
+                    <MessageCircle className="mx-auto my-2 h-16 w-16 text-primary" />
                     <h3 className="font-bold text-xl">Instant Messaging</h3>
                     <p className="">Chat in real-time with your peers</p>
                 </div>
                 <div className="flex flex-col content-center">
-                    <Users className="mx-auto h-16 w-16 text-primary" />
+                    <Users className="mx-auto my-2 h-16 w-16 text-primary" />
                     <h3 className="font-bold text-xl">Random Pairing</h3>
                     <p>Get to meet someone new every time</p>
                 </div>
                 <div className="flex flex-col content-center">
-                    <School className="mx-auto h-16 w-16 text-primary" />
+                    <img className="mx-auto my-2 h-16 w-16" src="IITH_Logo.png" alt="" />
                     <h3 className="font-bold text-xl">IITH - Only</h3>
                     <p>Made by students of IITH, for students of IITH</p>
                 </div>
@@ -43,17 +43,17 @@ export default function Home() {
             <h1 className="font-black text-4xl" >How it Works</h1>
             <div className="grid grid-cols-3 gap-3 mt-8">
                 <div className="flex flex-col content-center">
-                    <span className="flex h-12 w-12 mx-auto items-center justify-center rounded-full bg-black text-white text-xl font-bold">1</span>
+                    <span className="flex my-2 h-12 w-12 mx-auto items-center justify-center rounded-full bg-black text-white text-xl font-bold">1</span>
                     <h3 className="font-bold text-xl">Sign In</h3>
                     <p className="">Using your official college email</p>
                 </div>
                 <div className="flex flex-col content-center">
-                    <span className="flex h-12 w-12 mx-auto items-center justify-center rounded-full bg-black text-white text-xl font-bold">2</span>
+                    <span className="flex my-2 h-12 w-12 mx-auto items-center justify-center rounded-full bg-black text-white text-xl font-bold">2</span>
                     <h3 className="font-bold text-xl">Random Pairing</h3>
                     <p>Click the button to get paired anonymously with a random person</p>
                 </div>
                 <div className="flex flex-col content-center">
-                    <span className="flex h-12 w-12 mx-auto items-center justify-center rounded-full bg-black text-white text-xl font-bold">3</span>
+                    <span className="flex my-2 h-12 w-12 mx-auto items-center justify-center rounded-full bg-black text-white text-xl font-bold">3</span>
                     <h3 className="font-bold text-xl">Start Chatting</h3>
                     <p>Chat away!</p>
                 </div>
