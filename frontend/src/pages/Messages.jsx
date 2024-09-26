@@ -1,6 +1,5 @@
 import AnonymousChat from "../components/AnonymousChat"
 import React from "react"
-import craeteMessageComponents from "../util/util"
 import createMessageComponenets from "../util/util"
 
 export default function Messages() {
