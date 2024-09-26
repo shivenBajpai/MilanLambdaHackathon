@@ -86,4 +86,93 @@ def add_anon(anon_details:dict):
         exception = "Both User ids are same"
         raise Exception(exception)
 
+    for index,i in enumerate(anon_details["messages"]):
+        anon_details["messages"][index] = ObjectId(i)
+
+    anon_details["from_id"] = ObjectId(anon_details["from_id"])
+    anon_details["to_id"] = ObjectId(anon_details["to_id"])
+
+    try:
+        inserted_record = anon_convos.insert_one(anon_details)
+    except Exception as e:
+        raise Exception(e)
+
+    return inserted_record.inserted_id
+
+#READ ALL MESSAGES OF AN ANON CONVO
+
+def get_anon(id:str):
+
+    anon_entry = anon_convos.find_one({
+        "_id": ObjectId(id)
+    })
+
+    if(not anon_entry):
+        raise Exception("Not found")
     
+    message_list = []
+    
+    for i in list(anon_entry["messages"]):
+        try:
+            message_anon = messages.find({
+                "_id": i
+            })
+        except Exception as e:
+            raise Exception(e)
+        message_list.append(message_anon)
+
+    return message_list
+
+#UPDATE ANON BY ADDING A MESSAGE TO IT
+
+def update_anon(convo_id:str,message_id:str):
+
+    message = messages.find_one({
+        "_id": ObjectId(message_id)
+    })
+
+    if(not message):
+        exception = "Message ID not found"
+        raise Exception(exception)
+    
+    anon_entry = anon_convos.find_one({
+        "_id": ObjectId(convo_id)
+    })
+
+    if(not anon_entry):
+        exception = "Convo ID not found"
+        raise Exception(exception)
+    
+    anon_convos.update_one({
+        "_id": ObjectId(convo_id)
+    },
+    {
+        "$push": {
+            "messages": message_id
+        }
+    })
+
+    return anon_convos.find_one({"_id": ObjectId(convo_id)})
+
+#DELETE ANON CONVO
+
+def delete_anon(id:str):
+
+    anon_entry = anon_convos.find_one({
+        "_id": ObjectId(id)
+    })
+
+    if(not anon_entry):
+        exception = "Convo ID not found"
+        raise Exception(exception)
+    
+    for i in list(anon_entry["messages"]):
+        messages.delete_one({
+            "_id": i
+        })
+
+    anon_convos.delete_one({
+        "_id": ObjectId(id)
+    })
+
+    return 1
