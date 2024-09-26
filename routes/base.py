@@ -1,7 +1,6 @@
 #IMPORTS
 
 from flask import Blueprint,render_template,url_for
-from ..models import reset_db
 
 #CREATING BLUEPRINT
 
