@@ -2,14 +2,15 @@ import { Link } from "react-router-dom"
 import { MessageCircle, Users, School, Shield } from "lucide-react"
 
 export default function Home() {
-    return <div className="flex min-h-full w-screen flex-col justify-center text-center">
-        <div className="flex flex-row justify-start content-center">
+    return <div className="flex min-h-full flex-col justify-center text-center">
+        <div className="mt-10 flex flex-row justify-center content-center">
             <img className="w-20" src="logo.png" alt="" />
-            <h1 className="font-black text-2xl my-auto">IPHAC</h1>
+            <h1 className="text-6xl my-auto">IPHAC</h1>
         </div>
 
-        <div className="flex flex-col justify-center py-32">
-            <h1 className="font-black text-6xl" >Connect with Your College Peers</h1>
+        <div className="flex flex-col justify-center pb-14 pt-14">
+            <h1 className="font-bold text-6xl mb-8" >Connect with Your College Peers</h1>
+            <h1 className="text-red-500 text-2xl" >Connect with new people</h1>
             <p className="mt-4 text-gray-700" >IPHAC pairs you with random students from your college who are online.<br></br>Identities are kept anonymous until both sides agree to reveal.<br></br>Chat, make friends, and expand your network!</p>
             <div className="mt-8">
                 <Link className="p-2 rounded-md bg-red-700 text-white" to="/messages">
@@ -18,7 +19,7 @@ export default function Home() {
             </div>
         </div>
 
-        <div className="flex flex-col justify-center bg-red-300 py-32">
+        <div className="mx-10 flex flex-col justify-center bg-red-400 py-32 rounded-md">
             <h1 className="font-black text-4xl" >Features</h1>
             <div className="grid grid-cols-3 gap-3 mt-8">
                 <div className="flex flex-col content-center">
@@ -38,7 +39,7 @@ export default function Home() {
                 </div>
             </div>
         </div>
-        
+
         <div className="flex flex-col justify-center text-center py-32">
             <h1 className="font-black text-4xl" >How it Works</h1>
             <div className="grid grid-cols-3 gap-3 mt-8">
@@ -61,7 +62,7 @@ export default function Home() {
         </div>
 
 
-        <div className="flex flex-col justify-center py-32 bg-red-300 text-center">
+        <div className="mx-10 rounded-sm flex flex-col justify-center py-32 bg-red-400 text-center">
             <h1 className="font-black text-4xl" >About IPHAC</h1>
             <p className="my-3">
                 IPHAC is designed to allow you to meet a random mix of people you wouldn't normally meet in your day-to-day campus life.<br></br>
@@ -75,11 +76,11 @@ export default function Home() {
             </div>
         </div>
 
-        <div className="flex flex-row py-4 text-left">
-            <p className="flex-grow px-3">
+        <div className="mx-10 flex flex-row py-4 text-left justify-between">
+            <p className="px-3 font-bold">
                 Copyright Notice
             </p>
-            <p className=" px-3">
+            <p className="px-3 font-bold">
                 Terms of Service Link
             </p>
         </div>

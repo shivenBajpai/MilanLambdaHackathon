@@ -12,13 +12,13 @@ export default function AnonymousChat(props) {
         },
         {
             id: 1,
-            author: "user1",
+            author: "Anonymous",
             timestamp: 1727180924,
             text: "Great amazing",
         },
         {
             id: 0,
-            author: "user1",
+            author: "Anonymous",
             timestamp: 1727180924,
             text: "Boohoo",
         },
@@ -36,7 +36,7 @@ export default function AnonymousChat(props) {
         },
         {
             id: 4,
-            author: "user2",
+            author: "Anonymous",
             timestamp: 1827190929,
             text: "lollllll",
         },
@@ -54,25 +54,19 @@ export default function AnonymousChat(props) {
         },
         {
             id: 7,
-            author: "user7",
+            author: "Anonymous",
             timestamp: 1827190932,
             text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         },
         {
             id: 7,
-            author: "user7",
+            author: "Anonymous",
             timestamp: 1827190932,
             text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         },
         {
             id: 7,
-            author: "user7",
-            timestamp: 1827190932,
-            text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        },
-        {
-            id: 7,
-            author: "Me",
+            author: "Anonymous",
             timestamp: 1827190932,
             text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         },
@@ -80,7 +74,7 @@ export default function AnonymousChat(props) {
             id: 7,
             author: "Me",
             timestamp: 1827190932,
-            text: "lollll",
+            text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         },
         {
             id: 7,
@@ -90,7 +84,13 @@ export default function AnonymousChat(props) {
         },
         {
             id: 7,
-            author: "user8",
+            author: "Me",
+            timestamp: 1827190932,
+            text: "lollll",
+        },
+        {
+            id: 7,
+            author: "Anonymous",
             timestamp: 1827190932,
             text: "lollll",
         },
@@ -100,7 +100,9 @@ export default function AnonymousChat(props) {
             timestamp: 1827190932,
             text: "lollll",
         }
-    ];
+    ]
+
+    let otherUser = "Anonymous"
 
     const messageElements = createMessageComponenets(messages)
 
@@ -113,9 +115,13 @@ export default function AnonymousChat(props) {
                 <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                     <div class="w-3/5 relative transform rounded-lg bg-white text-left shadow-xl transition-all">
                         <div class="flex flex-col bg-gray-50 px-4 py-3 sm:flex sm:flex-col sm:px-6">
-                            <div class="flex justify-end">
-                                <button type="button" class="mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
-                                <button onClick={() => props.close()} type="button" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">X</button>
+                            <div class="flex justify-between">
+                                <div className="mr-16"></div>
+                                <div className="font-bold">{otherUser}</div>
+                                <div>
+                                    <button type="button" class="mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
+                                    <button onClick={() => props.close()} type="button" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">X</button>
+                                </div>
                             </div>
                             <div class="px-6 pb-4">
                                 <div class="flex flex-col-reverse space-y-1 mt-4 -mx-2 h-96 overflow-y-auto scrollbar-red">
