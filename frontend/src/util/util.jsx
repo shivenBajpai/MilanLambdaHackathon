@@ -1,10 +1,13 @@
-export default function createMessageComponenets(messages) {
+export default function createMessageComponenets(messages, thisUser) {
     let messageElements = []
-    const User = "Me"
     const DtFormat = Intl.DateTimeFormat(undefined, {
         hour12: true,
         timeStyle: "short"
     })
+
+    // const DtFormat = {
+    //     format(string) {return ""}
+    // }
 
     for (let i = 0; i<messages.length; i++) {
         let spacing = " mt-2"
@@ -13,7 +16,7 @@ export default function createMessageComponenets(messages) {
         }
         let timeNext = DtFormat.format(messages[i].timestamp)
         let timeThis = (i != messages.length - 1) ? DtFormat.format(messages[i+1].timestamp) : timeNext = DtFormat.format(messages[i].timestamp)
-        if (messages[i].author == User) {
+        if (messages[i].author == thisUser) {
             messageElements.push(
                 <div className={"col-start-6 col-end-13 rounded-lg" + spacing}>
                     <div className="flex items-center justify-start flex-row-reverse">
@@ -21,7 +24,7 @@ export default function createMessageComponenets(messages) {
                             className="relative mr-3 text-md bg-red-300 py-2 px-4 shadow rounded-xl"
                         >
                             <div>{messages[i].text}
-                                {((timeNext != timeThis) || messages[i+1]?.author != User) && (
+                                {((timeNext != timeThis) || messages[i+1]?.author != thisUser) && (
                                     <span><p className="text-end text-xs font-bold">{timeThis}</p></span>
                                 )}
                             </div>
@@ -33,10 +36,10 @@ export default function createMessageComponenets(messages) {
 
         } else {
             let margin = " ml-10"
-            if (i != (messages.length-1) && ((messages[i].author == messages[i+1].author) && messages[i].author != messages[i-1].author) || (messages[i-1].author == User)) {
+            if (i != (messages.length-1) &&  i != 0 && ((messages[i].author == messages[i+1].author) && messages[i].author != messages[i-1].author) || ( i != 0 && messages[i-1].author == thisUser)) {
                 margin = ""
             }
-            const topUser = (i != (messages.length-1) && ((messages[i].author == messages[i+1].author) && messages[i].author != messages[i-1].author) || (messages[i-1].author == User))
+            const topUser = (i != (messages.length-1) && ((messages[i].author == messages[i+1].author) &&  i != 0 && messages[i].author != messages[i-1].author) || ( i != 0 && messages[i-1].author == thisUser))
             messageElements.push(
                 <div className={"col-start-1 col-end-8 rounded-lg" + spacing + margin}>
                     <div className="flex flex-col">
@@ -47,7 +50,7 @@ export default function createMessageComponenets(messages) {
                             className="relative ml-3 text-md bg-white py-2 px-4 shadow rounded-xl"
                         >
                             <div>{messages[i].text}
-                                {((timeNext != timeThis) || messages[i+1]?.author == User) && (
+                                {((timeNext != timeThis) || messages[i+1]?.author == thisUser) && (
                                     <span><p className="text-start text-xs font-bold">{timeThis}</p></span>
                                 )}
                             </div>

@@ -1,6 +1,8 @@
 import AnonymousChat from "../components/AnonymousChat"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import createMessageComponenets from "../util/util"
+
+const apiRoot = "https://66f59c6c436827ced974918d.mockapi.io/api"
 
 export default function Messages() {
     const User = "Me"
@@ -16,178 +18,55 @@ export default function Messages() {
     }
 
     // Should be given as json ordered according to timestamp
-    const contacts = [
-        {   id: 2,
-            username: "Shivaram"
-        },
-        {   id: 3,
-            username: "Aric"
-        },
-        {   id: 2,
-            username: "Shivaram"
-        },
-        {   id: 3,
-            username: "Aric"
-        },
-        {   id: 2,
-            username: "Shivaram"
-        },
-        {   id: 3,
-            username: "Aric"
-        },
-    ]
+    const [contacts, setContacts] = useState([])
+    const [messages, setMessages] = useState([])
 
-    const messages = [
-        {
-            id: 2,
-            author: "Me",
-            timestamp: 1727180920,
-            text: "Hey how are you?",
-
-        },
-        {
-            id: 1,
-            author: "user1",
-            timestamp: 1727180924,
-            text: "Great amazing",
-        },
-        {
-            id: 0,
-            author: "user1",
-            timestamp: 1727180924,
-            text: "Boohoo",
-        },
-        {
-            id: 3,
-            author: "Me",
-            timestamp: 1727180925,
-            text: "who r u? oh aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        },
-        {
-            id: 4,
-            author: "Me",
-            timestamp: 1827190928,
-            text: "Tommy",
-        },
-        {
-            id: 4,
-            author: "user2",
-            timestamp: 1827190929,
-            text: "lollllll",
-        },
-        {
-            id: 3,
-            author: "Me",
-            timestamp: 1827190930,
-            text: "lollllll",
-        },
-        {
-            id: 3,
-            author: "Me",
-            timestamp: 1827190931,
-            text: "lollllll",
-        },
-        {
-            id: 7,
-            author: "user7",
-            timestamp: 1827190932,
-            text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        },
-        {
-            id: 7,
-            author: "user7",
-            timestamp: 1827190932,
-            text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        },
-        {
-            id: 7,
-            author: "user7",
-            timestamp: 1827190932,
-            text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        },
-        {
-            id: 7,
-            author: "Me",
-            timestamp: 1827190932,
-            text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        },
-        {
-            id: 7,
-            author: "Me",
-            timestamp: 1827190932,
-            text: "lollll",
-        },
-        {
-            id: 7,
-            author: "Me",
-            timestamp: 1827190932,
-            text: "lollll",
-        },
-        {
-            id: 7,
-            author: "user8",
-            timestamp: 1827190932,
-            text: "lollll",
-        },
-        {
-            id: 7,
-            author: "Me",
-            timestamp: 1827190932,
-            text: "lollll",
+    useEffect(() => {
+      const fetchContacts = async () => {
+        try {
+          const response = await fetch(apiRoot + '/contacts');
+          const data = await response.json();
+          setContacts(data); // assuming the API returns an array of strings
+        } catch (error) {
+          console.error('Error fetching data:', error);
         }
-    ];
+      };
+  
+      // Fetch initially and then every 5 seconds (5000 ms)
+      fetchContacts();
+      const interval = setInterval(fetchContacts, 5000);
+  
+      // Cleanup the interval on component unmount
+      return () => clearInterval(interval);
+    }, []);
 
-    // let messageGroups = [[]] // List of lists of indices in messages that should all be in one group
-    // let last_message = messages[0].author
+    useEffect(() => {
+      const fetchMessages = async () => {
+        try {
+          const response = await fetch(apiRoot + '/message');
+          const data = await response.json();
+          setMessages(data); // assuming the API returns an array of strings
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+  
+      // Fetch initially and then every 5 seconds (5000 ms)
+      fetchMessages();
+      const interval = setInterval(fetchMessages, 5000);
+  
+      // Cleanup the interval on component unmount
+      return () => clearInterval(interval);
+    }, []);
 
-    // for (const [idx, message] of messages.entries()) {
-    //     if (message.author == last_message) {
-    //         messageGroups[messageGroups.length-1].push(idx);
-    //     }
-    //     else {
-    //         messageGroups.push([idx]);
-    //         last_message = message.author
-    //     }
-    // }
-
-    // const messageElements = messageGroups.map((messageGroup) => {
-    //     if (messages[messageGroup[0]].author == User) {
-    //         return (
-    //             <div className="m-2 flex justify-end flex-col ml-auto">
-    //                 {
-    //                     messageGroup.map((index) =>
-    //                         <p className="mr-5 mb-1 p-2 rounded-md text-left content-end font-normal text-md max-w-96 break-words bg-red-300">{messages[index].author!=User && <div><span className="text-red-600 font-bold">{messages[index].author+":"}</span><br></br></div>}{messages[index].text}</p>
-    //                     )
-    //                 }
-    //                 <p className="ml-auto mr-5">{DtFormat.format(messages[messageGroup[messageGroup.length-1]].timestamp)}</p>
-    //             </div>
-    //         )
-    //     }
-    //     else {
-    //         return (
-    //             <div className="m-2 flex justify-begin">
-    //                 <img className="w-10 h-10 mr-2" src="/profile.png"></img>
-    //                 <div className="m-2 flex justify-begin flex-col">
-    //                     {
-    //                         messageGroup.map((index, i) =>
-    //                             <p className="mr-5 mb-1 p-2 rounded-md text-left font-normal text-md max-w-96 break-words bg-gray-300">{i==0 && <><span className="text-red-600 font-bold">{messages[index].author+":"}</span><br></br></>}{messages[index].text}</p>
-    //                         )
-    //                     }
-    //                     <p>{DtFormat.format(messages[messageGroup[messageGroup.length-1]].timestamp)}</p>
-    //                 </div>
-    //             </div>
-    //         )
-    //     }
-    // })
-
-    const newMessageElements = createMessageComponenets(messages)
+    const newMessageElements = createMessageComponenets(messages, User)
 
     const contactElements = contacts.map((contact) => {
         return (
             <button
-                className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2"
+                className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2" onClick={() => changeCurrentChat(contact.username)}
             >
-                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-red-500 flex-shrink-0" src="/profile.png"></img>
+                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-red-500 flex-shrink-0" src={contact.pfp}></img>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
                 {/* Unread messages */}
                 {/* <div
@@ -201,7 +80,7 @@ export default function Messages() {
 
     return (
         <div className="flex h-screen antialiased text-gray-900">
-            {AnonymousChatOpen && <AnonymousChat close={toggleAnonymousChatOpen}></AnonymousChat>}
+            {AnonymousChatOpen && <AnonymousChat thisUser={User} close={toggleAnonymousChatOpen}></AnonymousChat>}
             <div className="flex flex-row h-full w-full overflow-x-hidden">
               <div className="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
                 <div className="flex flex-row items-center justify-center h-12 w-full">
@@ -225,7 +104,7 @@ export default function Messages() {
                   <div className="text-sm font-semibold mt-2">Username</div>
                   <div className="text-xs text-gray-500">Email</div>
                 </div>
-                <div className="flex flex-col mt-8">
+                <div className="flex flex-grow flex-col mt-8">
                   <div className="flex flex-row items-center justify-between text-xs">
                     <span className="font-bold">Active DM's</span>
                     {/* Number of active dms of the user */}
@@ -235,7 +114,7 @@ export default function Messages() {
                     >
                   </div>
                   {/* User profiles */}
-                  <div className="flex flex-col space-y-1 mt-4 -mx-2 h-64 overflow-y-auto scrollbar-red">
+                  <div className="flex flex-grow flex-col space-y-1 mt-4 -mx-2 h-64 overflow-y-auto scrollbar-red">
                     {contactElements}
                   </div>
                   {/* Button to chat with random person */}
