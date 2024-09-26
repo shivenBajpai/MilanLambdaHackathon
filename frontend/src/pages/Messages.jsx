@@ -9,62 +9,81 @@ export default function Messages() {
     const [currentChat, changeCurrentChat] = React.useState(null)
     const [AnonymousChatOpen, toggleAnonymousChatOpen] = React.useState(false)
 
+    let other_user = null
+    let other_user_pfp = null
+
     function newRandomChat() {
       toggleAnonymousChatOpen(true)
     }
 
-    function changeChat (user) {
-      return
+    async function sendMessage() {
+      let input = document.getElementById("input_field")
+      let input_val = input.value
+      input.value = ""
+      if (input_val != "") fetch(apiRoot + '/message/create', {
+        method:"POST",
+        body: JSON.stringify({
+          from_id: "", // TODO: Need logged in users info
+          to_id: currentChat,
+          message: input_val,
+          timestamp: Date.now(),
+          anon: false
+        })
+      })
     }
+
+    function handleKeyDown(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    };
 
     // Should be given as json ordered according to timestamp
     const [contacts, setContacts] = useState([])
     const [messages, setMessages] = useState([])
 
+    // Fetching Contacts
     useEffect(() => {
       const fetchContacts = async () => {
         try {
           const response = await fetch(apiRoot + '/contacts');
           const data = await response.json();
-          setContacts(data); // assuming the API returns an array of strings
+          setContacts(data);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       };
   
-      // Fetch initially and then every 5 seconds (5000 ms)
       fetchContacts();
       const interval = setInterval(fetchContacts, 5000);
   
-      // Cleanup the interval on component unmount
       return () => clearInterval(interval);
     }, []);
 
+    // Fetching messages
     useEffect(() => {
       const fetchMessages = async () => {
         try {
-          const response = await fetch(apiRoot + '/message');
+          const response = await fetch(apiRoot + '/message'); // TODO: Optimize to use after condition, adjust to have from_id and to_id
           const data = await response.json();
-          setMessages(data); // assuming the API returns an array of strings
+          setMessages(data);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       };
   
-      // Fetch initially and then every 5 seconds (5000 ms)
       fetchMessages();
-      const interval = setInterval(fetchMessages, 5000);
+      const interval = setInterval(fetchMessages, 1000);
   
-      // Cleanup the interval on component unmount
       return () => clearInterval(interval);
     }, []);
 
-    const newMessageElements = createMessageComponenets(messages, User)
+    const newMessageElements = createMessageComponenets(messages, User, other_user, other_user_pfp)
 
     const contactElements = contacts.map((contact) => {
         return (
             <button
-                className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2" onClick={() => changeCurrentChat(contact.username)}
+                className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2" onClick={() => changeCurrentChat(contact.id)}
             >
                 <img className="flex items-center justify-center h-8 w-8 rounded-full bg-red-500 flex-shrink-0" src={contact.pfp}></img>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
@@ -141,8 +160,10 @@ export default function Messages() {
                     <div className="flex-grow ml-4">
                       <div className="relative w-full">
                         <input
+                          id="input_field"
                           type="text"
                           className="flex w-full border rounded-xl focus:outline-none focus:border-red-300 pl-4 h-10"
+                          onKeyDown={handleKeyDown}
                         />
                         {/* THIS WAS THE EMOJI ICON <button
                           className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
@@ -166,7 +187,7 @@ export default function Messages() {
                     </div>
                     <div className="ml-4">
                       <button
-                        className="flex items-center justify-center bg-red-500 hover:bg-red-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
+                        className="flex items-center justify-center bg-red-500 hover:bg-red-600 rounded-xl text-white px-4 py-1 flex-shrink-0" onClick={sendMessage}
                       >
                         <span>Send</span>
                         <span className="ml-2">
