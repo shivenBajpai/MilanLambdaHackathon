@@ -19,7 +19,7 @@ export default function Home() {
             </div>
         </div>
 
-        <div className="mx-10 flex flex-col justify-center bg-red-400 py-32 rounded-md">
+        <div className="mx-10 flex flex-col justify-center bg-red-400 py-32 rounded-md text-white">
             <h1 className="font-black text-4xl" >Features</h1>
             <div className="grid grid-cols-3 gap-3 mt-8">
                 <div className="flex flex-col content-center">
@@ -62,7 +62,7 @@ export default function Home() {
         </div>
 
 
-        <div className="mx-10 rounded-sm flex flex-col justify-center py-32 bg-red-400 text-center">
+        <div className="mx-10 rounded-sm flex flex-col justify-center py-32 bg-red-400 text-center text-white">
             <h1 className="font-black text-4xl" >About IPHAC</h1>
             <p className="my-3">
                 IPHAC is designed to allow you to meet a random mix of people you wouldn't normally meet in your day-to-day campus life.<br></br>
