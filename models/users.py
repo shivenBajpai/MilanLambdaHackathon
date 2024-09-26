@@ -1,5 +1,8 @@
+#IMPORTS
+
 from pymongo import MongoClient, errors
 from pymongo.server_api import ServerApi
+from bson.objectid import ObjectId
 
 uri = "mongodb+srv://aritron1806:Am180906@cluster0.s15oq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&authSource=admin"
 
@@ -53,7 +56,7 @@ users_Schema = {
 
 def create_users():
 
-    if(users):
+    if(users != None):
         return "Already Exists"
 
     try:
@@ -78,7 +81,7 @@ def add_user(userDetails:dict):
         if e.__class__.__name__ == "DuplicateKeyError":
             exception = f"User with either Username: {userDetails["username"]} or Email: {userDetails["email"]} already exists in the users collection."
         elif e.__class__.__name__ == "WriteError":
-            exception = "Check userSchema. Input values not according to it"
+            exception = "Check userSchema. Input values are not according to it"
         else:
             exception = e
         raise Exception(exception)
@@ -90,7 +93,7 @@ def add_user(userDetails:dict):
 def get_user(id):
 
     user = users.find_one({
-        "_id" : id
+        "_id" : ObjectId(id)
     })
 
     if(not user):
@@ -104,7 +107,7 @@ def get_user(id):
 def update_user(id, field, new_value):
 
     user = users.find_one({
-        "_id" : id
+        "_id" : ObjectId(id)
     })
 
     if(not user):
@@ -112,7 +115,7 @@ def update_user(id, field, new_value):
         raise Exception(exception)
 
     users.update_one({
-        "_id" : id
+        "_id" : ObjectId(id)
     },
     {
         "$set" : {
@@ -120,12 +123,12 @@ def update_user(id, field, new_value):
         }
     })
 
-    return users.find_one({"_id":id})
+    return users.find_one({"_id":ObjectId(id)})
 
 def delete_user(id):
 
     user = users.find_one({
-        "_id" : id
+        "_id" : ObjectId(id)
     })
 
     if(not user):
@@ -133,7 +136,7 @@ def delete_user(id):
         raise Exception(exception)
 
     users.delete_one({
-        "_id": id
+        "_id": ObjectId(id)
     })
 
     return 1
