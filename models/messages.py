@@ -45,6 +45,10 @@ message_Schema = {
             "timestamp": {
                 "bsonType": "datetime",
                 "description": "Timestamp of the message"
+            },
+            "anon": {
+                "bsonType": "bool",
+                "description": "True for messages in anonymous chats. False otherwise."
             }
         }
     }
@@ -70,7 +74,7 @@ def create_messages():
 
 #ADD MESSAGE ENTRY
 
-def add_message(messageDetails:dict):
+def add_message(messageDetails:dict, anon:bool):
 
     user1 = users.find_one({
         "_id": ObjectId(messageDetails["from_id"])
@@ -88,6 +92,8 @@ def add_message(messageDetails:dict):
         exception = "Both User ids are same"
         raise Exception(exception)
     
+    messageDetails["anon"] = anon
+    
     messageDetails["from_id"] = ObjectId(messageDetails["from_id"])
     messageDetails["to_id"] = ObjectId(messageDetails["to_id"])
 
@@ -104,34 +110,28 @@ def add_message(messageDetails:dict):
 
 #READ MESSAGES BETWEEN 2 USERS SORTED BY TIMESTAMP
 
-def get_message(from_id, to_id):
+def get_message(from_id:str, to_id:str, anon:bool):
 
     message_list_from = messages.find({
         "from_id": ObjectId(from_id),
-        "to_id": ObjectId(to_id)
+        "to_id": ObjectId(to_id),
+        "anon": anon
     })
 
     message_list_to = messages.find({
         "from_id": ObjectId(to_id),
-        "to_id": ObjectId(from_id)
+        "to_id": ObjectId(from_id),
+        "anon": anon
     })
 
     message_list = list(message_list_from) + list(message_list_to)
 
     if(len(message_list) == 0):
-        exception = f"Couldn't find any messages between user1:{from_id} and user2:{to_id}"
-        raise Exception(exception)
+        return message_list
     
     message_list_sorted = sorted(message_list, key=lambda d:d['timestamp'])
 
     return list(message_list_sorted)   
-
-add = {
-    "from_id": "66f4495f8b8e6d7d49662152",
-    "to_id": "66f445234130e351d102f129",
-    "message": "every",
-    "timestamp": datetime.now(tz=pytz.timezone('Asia/Kolkata'))
-}
 
 def update_message(id, new_message):
     
