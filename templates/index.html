@@ -1,0 +1,21 @@
+{% extends 'base.html' %} {% block head %}
+<title>ProjName</title>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/index.css.css') }}"
+/>
+{% endblock %} {% block body %}
+<div className="form-container">
+  <h1>Login Form</h1>
+  <form action="" className="form">
+    <input type="email" placeholder="Email ID" id="" className="email-input" />
+    <input
+      type="password"
+      placeholder="Password"
+      name=""
+      id=""
+      className="password-input"
+    />
+  </form>
+</div>
+{% endblock %}

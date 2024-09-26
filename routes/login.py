@@ -1,7 +1,7 @@
 #IMPORTS
 
-from flask import Blueprint,render_template, render_template, request, redirect, flash
-from models.users import users_Schema, add_users
+from flask import Blueprint, render_template, render_template, request, redirect, flash
+from models.users import users_Schema, add_user
 
 #CREATING BLUEPRINT
 
@@ -20,7 +20,7 @@ def index():
             "OAuth": "token"
         }
         try:
-            id = add_users(dict1)
+            id = add_user(dict1)
             print(id)
         except Exception as e:
             print(e)
