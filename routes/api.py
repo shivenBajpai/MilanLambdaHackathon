@@ -59,7 +59,6 @@ def update_message(msg_id: int):
     except Exception as e:
         return {"err": str(e)}, 500
 
-
 @api.route('/message/<msg_id>', methods=['DELETE'])
 def delete_message(msg_id: int):
     try:
