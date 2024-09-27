@@ -85,13 +85,13 @@ def create_message():
 @api.route('/message/get', methods=['GET'])
 @require_auth
 def get_message():
-    if request.args.get('from_id') != request.cookies.get('userid') \
-        and requests.args.get('to_id') != request.cookies.get('userid'):
-        return {"err": "Unauthorized"}, 401
     
     try:
         from_id = request.args['from_id']
         to_id = request.args['to_id']
+        if from_id != request.cookies.get('userid') \
+            and to_id != request.cookies.get('userid'):
+            return {"err": "Unauthorized"}, 401
         anon = request.args.get('anon', None)
         timestamp = datetime.from_timestamp(int(request.args.get('timestamp', None)))
         msg = users.get_message(from_id, to_id, anon, timestamp)
