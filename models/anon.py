@@ -116,11 +116,10 @@ def add_anon(anon_details:dict):
             exception = e
             raise Exception(exception)
 
-    return inserted_record.inserted_id
+    return str(inserted_record.inserted_id)
 
 #READ ALL MESSAGES OF AN ANON CONVO => TAKES IN ANON_CONVERSATION ID AND OPTIONALLY TIMESTAMP IF FRONTEND WANTS MESSAGES AFTER AND ON A PARTICULAR DATETIME
 #RETURNS A LIST OF DICTIONARIES SORTED BY TIMESTAMP
-
 
 def get_anon(id:str, timestamp=None):
 
@@ -147,6 +146,12 @@ def get_anon(id:str, timestamp=None):
             message_anon = messages.find(query)
         except Exception as e:
             raise Exception(e)
+        
+        message_anon["from_id"] = str(message_anon["from_id"])
+        message_anon["to_id"] = str(message_anon["to_id"])
+        if(message_anon["anon"]):
+            message_anon["anon"] = str(message_anon["anon"])
+
         message_list.append(message_anon)
 
     return sorted(message_list, key=lambda d:d['timestamp'])
@@ -181,7 +186,15 @@ def update_anon(convo_id:str,message_id:str):
         }
     })
 
-    return anon_convos.find_one({"_id": ObjectId(convo_id)})
+    result_object = anon_convos.find_one({"_id": ObjectId(convo_id)})
+    result_object["from_id"] = str(result_object["from_id"])
+    result_object["to_id"] = str(result_object["to_id"])
+    result_object["_id"] = str(result_object["_id"])
+
+    for index,i in enumerate(result_object["messages"]):
+        result_object["message"][index] = str(i)
+
+    return result_object
 
 #DELETE ANON CONVO BY ID => TAKES ANON CONVO ID => RETURNS 1 IF DELETED
 #DELETES ALL MESSAGES THAT ARE A PART OF IT
@@ -284,5 +297,12 @@ def get_anon_dict(id:str):
     if(not anon_entry):
         exception = "Convo ID not found"
         raise NotFoundError(exception)
+    
+    anon_entry["from_id"] = str(anon_entry["from_id"])
+    anon_entry["to_id"] = str(anon_entry["to_id"])
+    anon_entry["_id"] = str(anon_entry["_id"])
+
+    for index,i in enumerate(anon_entry["messages"]):
+        anon_entry["message"][index] = str(i)
     
     return anon_entry
