@@ -194,5 +194,4 @@ def matchmake():
     })
 
     convo = anon.get_anon(anon_id)
-    convo['_id'] = str(convo['_id'])
     return convo
