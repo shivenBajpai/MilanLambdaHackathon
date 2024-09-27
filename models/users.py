@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 
 uri = "mongodb+srv://aritron1806:Am180906@cluster0.s15oq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&authSource=admin"
 
-#CREATE CONNECTION TO DB 
+#CREATE CONNECTION TO DB
 
 client = MongoClient(uri, server_api=ServerApi('1'))
 db = client.Main_DB
@@ -102,7 +102,7 @@ def add_user(userDetails:dict):
         inserted_record = users.insert_one(userDetails)
     except Exception as e:
         if e.__class__.__name__ == "DuplicateKeyError":
-            exception = f"User with either Username: {userDetails["username"]} or Email: {userDetails["email"]} already exists in the users collection."
+            exception = f"User with either Username: {userDetails['username']} or Email: {userDetails['email']} already exists in the users collection."
             raise DuplicateKeyError(exception)
         elif e.__class__.__name__ == "WriteError":
             exception = "Check userSchema. Input values are not according to it"
@@ -110,7 +110,7 @@ def add_user(userDetails:dict):
         else:
             exception = e
             raise Exception(exception)
-    
+
     return str(inserted_record.inserted_id)
 
 #READS USERS BY ID => RETURNS OBJECT DICTIONARY
@@ -124,7 +124,7 @@ def get_user(id:str):
     if(not user):
         exception = f"Couldn't find any user with id: {id}"
         raise NotFoundError(exception)
-    
+
     return user
 
 #UPDATE ONE FIELD OF THE DICTIONARY => TAKES User_id, NAME OF FIELD AS IN SCHEMA, NEW VALUE FOR FIELD =>  RETURNS UPDATED USER OBJECT DICTIONARY
@@ -181,7 +181,7 @@ def get_user_by_email(email:str):
     if(not user):
         exception = f"Couldn't find any user with email: {email}"
         raise NotFoundError(exception)
-    
+
     return user
 
 #GET ALL CONTACTS OF AN USER => TAKES ID => RETURNS LIST OF USER ID'S WHICH ARE CONTACTS
@@ -195,7 +195,7 @@ def get_contacts(id:str):
     if(not user):
         exception = f"Couldn't find any user with id: {id}"
         raise NotFoundError(exception)
-    
+
     contact_list = user["contacts"]
     contact_list = [str(x) for x in list(contact_list)]
     return contact_list
