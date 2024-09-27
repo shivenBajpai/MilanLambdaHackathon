@@ -37,17 +37,17 @@ anon_Schema = {
         "required": ["from_id", "to_id", "messages"],
         "properties": {
             "from_id": {
-                "bsonType": "objectID",
+                "bsonType": "objectId",
                 "description": "It's the _id of the message sender"
             },
             "to_id": {
-                "bsonType": "objectID",
+                "bsonType": "objectId",
                 "description": "It's the _id of the message reciever"
             },
             "messages": {
                 "bsonType": "array",
                 "items": {
-                    "bsonType": "objectID",
+                    "bsonType": "objectId",
                     "description": "The _id of the message in the anonymous convo"
                 }
             },

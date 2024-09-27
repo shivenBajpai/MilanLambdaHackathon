@@ -47,23 +47,14 @@ users_Schema = {
                 "bsonType": "string",
                 "description": "Must be a string containing @"
             },
-            "gender": {
-                "bsonType": "string",
-                "enum": ["Male", "Female", "Other"],
-                "description": "Must be a string in [\"Male\", \"Female\", \"Other\"]"
-            },
             "pfp": {
                 "bsonType": "string",
                 "description": "Must be an URL"
             },
-            "OAuth": {
-                "bsonType": "string",
-                "description": "Must be an OAuth token"
-            },
             "contacts": {
                 "bsonType": "array",
                 "items": {
-                    "bsonType": "objectID",
+                    "bsonType": "objectId",
                     "description": "It's the id of the users, the Current User has a DM open with."
                 }
             }

@@ -51,11 +51,11 @@ message_Schema = {
                 "description": "The content of the message"
             },
             "timestamp": {
-                "bsonType": "datetime",
+                "bsonType": "date",
                 "description": "Timestamp of the message"
             },
             "anon": {
-                "bsonType": ["objectID", "null"],
+                "bsonType": ["objectId", "null"],
                 "description": "True for messages in anonymous chats. False otherwise."
             }
         }
