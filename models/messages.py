@@ -110,6 +110,7 @@ def add_message(messageDetails:dict, anon=None):
     messageDetails["to_id"] = ObjectId(messageDetails["to_id"])
     messageDetails["timestamp"] = datetime.now()
 
+    anon_event = None
     if(anon):
         anon_event = anon_convos.find_one({
             "_id": ObjectId(anon)
@@ -122,6 +123,7 @@ def add_message(messageDetails:dict, anon=None):
     try:
         inserted_record = messages.insert_one(messageDetails)
     except Exception as e:
+        raise e
         if e.__class__.__name__ == "WriteError":
             exception = "Check messageSchema. Input values are not according to it"
             raise WriteError(exception)
@@ -157,7 +159,9 @@ def add_message(messageDetails:dict, anon=None):
                 "contacts": ObjectId(messageDetails["from_id"])
             }
         })
+
     
+
     return str(inserted_record.inserted_id)
 
 #READ MESSAGES BETWEEN 2 USERS SORTED BY TIMESTAMP => TAKES FROM AND TO ID'S AND OPTIONAL ARGS ARE ANON AND TIMESTAMP => RETURN LIST OF MESSAGE OBJECT DICTIONARIES SORTED BY TIMESTAMP
@@ -197,36 +201,36 @@ def get_message(from_id:str, to_id:str, anon=None, timestamp=None):
     query = {
         "from_id": ObjectId(from_id),
         "to_id": ObjectId(to_id),
-        "anon": anon
     }
 
     if(timestamp):
         query["timestamp"] = {
             "$gte": timestamp
         }
-
-    message_list_from = messages.find(query)
+    
+    message_list_from = list(messages.find(query))
 
     query["from_id"] = ObjectId(to_id)
     query["to_id"] = ObjectId(from_id)
 
-    message_list_to = messages.find(query)
+    message_list_to = list(messages.find(query))
 
-    message_list = list(message_list_from) + list(message_list_to)
+    message_list = message_list_from + message_list_to
 
     for index,i  in enumerate(message_list):
+        message_list[index]["_id"] = str(i["_id"])
         message_list[index]["from_id"] = str(i["from_id"])
         message_list[index]["to_id"] = str(i["to_id"])
+        message_list[index]["timestamp"] = int(i['timestamp'].timestamp()*1000) 
         if(anon):
             message_list[index]["anon"] = str(i["anon"])
-
+    
     if(len(message_list) == 0):
         message_list_sorted = message_list
     else:
         message_list_sorted = sorted(message_list, key=lambda d:d['timestamp'])
 
     if(not anon):
-
         return_object = {
             "message_list": message_list_sorted,
             "anon_list": []

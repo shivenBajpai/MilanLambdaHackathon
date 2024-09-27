@@ -19,7 +19,7 @@ export default function createMessageComponenets(messages, thisUser, other_user,
                         <div
                             className="dark:text-white dark:bg-indigo-600 relative mr-3 text-md bg-indigo-400 py-2 px-4 shadow rounded-xl"
                         >
-                            <div>{messages[i].text}
+                            <div>{messages[i].message}
                                 {((timeNext != timeThis) || messages[i+1]?.from_id != thisUser) && (
                                     <span><p className="text-end text-xs font-bold">{timeThis}</p></span>
                                 )}
@@ -45,7 +45,7 @@ export default function createMessageComponenets(messages, thisUser, other_user,
                         <div
                             className="dark:bg-stone-700 dark:text-white relative ml-3 text-md bg-white py-2 px-4 shadow rounded-xl"
                         >
-                            <div>{messages[i].text}
+                            <div>{messages[i].message}
                                 {((timeNext != timeThis) || messages[i+1]?.from_id == thisUser) && (
                                     <span><p className="text-start text-xs font-bold">{timeThis}</p></span>
                                 )}

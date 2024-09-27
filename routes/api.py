@@ -74,18 +74,20 @@ def delete_user(user_id: str):
 @api.route('/message/create', methods=['POST'])
 @require_auth
 def create_message():
-    if request.data.get('from_id') != request.cookies.get('userid'):
+    data = request.json
+    if data.get('from_id') != request.cookies.get('userid'):
         return {"err": "Unauthorized"}, 401
 
     try: 
-        return messages.add_message(request.data)
+        return messages.add_message(data)
     except Exception as e:
+        raise e
         return {"err": str(e)}, 500
 
 @api.route('/message/get', methods=['GET'])
 @require_auth
 def get_message():
-    
+ 
     try:
         from_id = request.args['from_id']
         to_id = request.args['to_id']
@@ -165,6 +167,7 @@ to_be_informed = {}
 @api.route('/matchmake', methods=['POST'])
 @require_auth
 def matchmake(): 
+    global queue
     user1 = request.cookies.get('userid')
 
     if user1 in to_be_informed:
@@ -172,8 +175,7 @@ def matchmake():
         del to_be_informed[user1]
         convo = anon.get_anon(anon_id)
         convo['_id'] = str(convo['_id'])
-        return convo
-        
+        return convo 
 
     if not queue:
         queue.append(user1)
