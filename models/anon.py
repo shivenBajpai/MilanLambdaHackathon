@@ -225,7 +225,7 @@ def delete_anon(id:str):
 #UPDATE REVEAL STATUS => TAKES IN A ANON_CONVO ID AND A NUMBER CORRESPONDING TO THE USER# THAT PRESSED THE REVEAL BUTTON
 #RETURNS NOTHING
 
-def reveal_anon(anon_id:str, num:int):
+def reveal_anon(anon_id:str, userid: str):
     
     anon_entry = anon_convos.find_one({
         "_id": ObjectId(anon_id)
@@ -234,18 +234,25 @@ def reveal_anon(anon_id:str, num:int):
     if(not anon_entry):
         exception = "Convo ID not found"
         raise NotFoundError(exception)
-    
-    if(num != 1 and num != 2):
-        exception = "Invalid of 2nd Arg"
-        raise Exception(exception)
-    
+
+    userid = objectId(userid)
+
+    if(userid not in [anon_entry["from_id"], anon_entry["to_id"]]):
+        exception = "User ID not in current convo"
+        raise NotFoundError(exception)
+
+    if(userid == anon_entry["from_id"]):
+        userid = 1
+    else:
+        userid = 2
+
     reveal = anon_entry["reveal"]
 
     if(reveal == 0):
-        reveal = num
-    elif(reveal == 1 and num == 2):
+        reveal = userid
+    elif(reveal == 1 and userid == 2):
         reveal = 3
-    elif(reveal == 2 and num == 1):
+    elif(reveal == 2 and userid == 1):
         reveal = 3
     
     anon_convos.update_one({
@@ -256,6 +263,9 @@ def reveal_anon(anon_id:str, num:int):
             "reveal": reveal
         }
     })
+
+    if(reveal != 3):
+        return
 
     for i in anon_entry["messages"]:
         messages.update_one({
@@ -284,6 +294,8 @@ def reveal_anon(anon_id:str, num:int):
             "contacts": ObjectId(anon_entry["from_id"])
         }
     })
+
+    return
 
 #GET ANON_CONVO OBJECT FOR THE 2 USER IDS AND REVEAL STATUS => TAKE ANON_CONVO ID
 #RETURNS THE DICTIONARY OBJECT OF A ANON CONVO

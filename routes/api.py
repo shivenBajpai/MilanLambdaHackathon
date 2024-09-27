@@ -194,3 +194,17 @@ def matchmake():
 
     convo = anon.get_anon_dict(anon_id)
     return convo
+
+@api.route('/reveal/<anon_id>', methods=['POST'])
+@require_auth
+def reveal(anon_id: str):
+    userid = request.cookies.get('userid')
+
+    try:
+        convo = anon.get_anon_dict(anon_id)
+        if userid == convo['from_id'] and userid != convo['to_id']:
+            return {"err": "Unauthorized"}, 401
+        anon.reveal_anon(anon_id, userid)
+        return {"ok": "ok"}
+    except e:
+        {"err": str(e)}, 500
