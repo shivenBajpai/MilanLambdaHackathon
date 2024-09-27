@@ -1,13 +1,15 @@
 import AnonymousChat from "../components/AnonymousChat"
 import React, { useEffect, useState } from "react"
 import createMessageComponenets from "../util/util"
+import EmojiPicker from "emoji-picker-react"
 
 const apiRoot = "https://66f59c6c436827ced974918d.mockapi.io/api"
 
 export default function Messages() {
     const User = "Me"
-    const [currentChat, changeCurrentChat] = React.useState(null)
-    const [AnonymousChatOpen, toggleAnonymousChatOpen] = React.useState(false)
+    const [currentChat, changeCurrentChat] = useState(null)
+    const [AnonymousChatOpen, toggleAnonymousChatOpen] = useState(false)
+    const [emojiMenuVisible, toggleEmojiMenu] = useState(false)
 
     let other_user = null
     let other_user_pfp = null
@@ -37,6 +39,11 @@ export default function Messages() {
         sendMessage();
       }
     };
+
+    function pushEmojiToInput (emoji) {
+      let input = document.getElementById("input_field")
+      input.value = input.value + emoji.emoji
+    }
 
     // Should be given as json ordeindigo according to timestamp
     const [contacts, setContacts] = useState([])
@@ -108,7 +115,7 @@ export default function Messages() {
                   >
                     <img src="/logo.png"></img>
                   </div>
-                  <div className="ml-2 font-bold text-2xl">IPHAC</div>
+                  <div className="ml-2 font-bold text-2xl">ANOMY</div>
                 </div>
                 <div
                   className="flex flex-col items-center bg-transparent mt-4 w-full py-6 px-4 rounded-lg"
@@ -147,7 +154,8 @@ export default function Messages() {
                   className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-200 dark:bg-stone-800 h-full p-4"
                 >
                 {/* Message box */}
-                  <div className="flex flex-col h-full overflow-x-auto mb-4">
+                  <div className="relative flex flex-col items-end justify-end h-full overflow-x-auto mb-4 z-0">
+                  {emojiMenuVisible && <div className="absolute flex justify-end z-10"><EmojiPicker onEmojiClick={(emoji) => pushEmojiToInput(emoji)} theme="auto" lazyLoadEmojis={true}></EmojiPicker></div>}
                     <div className="flex flex-col-reverse overflow-y-auto h-full scrollbar-indigo">
                       <div className="grid grid-cols-12">
                         {currentChat!=null && newMessageElements}
@@ -165,7 +173,8 @@ export default function Messages() {
                           className="dark:bg-stone-800 dark:text-white flex w-full border dark:border-gray-600 rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
                           onKeyDown={handleKeyDown}
                         />
-                        {/* THIS WAS THE EMOJI ICON <button
+                        <button
+                          onClick = {() => toggleEmojiMenu(!emojiMenuVisible)}
                           className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
                         >
                           <svg
@@ -182,7 +191,7 @@ export default function Messages() {
                               d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                             ></path>
                           </svg>
-                        </button> */}
+                        </button>
                       </div>
                     </div>
                     <div className="ml-4">

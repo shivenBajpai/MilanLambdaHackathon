@@ -6,7 +6,7 @@ export default function Login() {
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <div className="flex justify-center items-center">
                     <img className="h-20 w-auto" src="logo.png" alt="Logo"/>
-                    <h1 className="font-bold text-5xl dark:text-zinc-50">IPHAC</h1>
+                    <h1 className="font-bold text-5xl dark:text-zinc-50">ANOMY</h1>
                     </div>
                     <h2 className="mt-4 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-zinc-50">Sign in to your account</h2>
                 </div>

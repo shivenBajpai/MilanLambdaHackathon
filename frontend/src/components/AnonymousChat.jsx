@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import createMessageComponenets from "../util/util"
+import EmojiPicker from "emoji-picker-react"
 
 export default function AnonymousChat(props) {
     // As soon as meet a stranger button is clicked we send a post request to server
@@ -23,6 +24,7 @@ export default function AnonymousChat(props) {
 
     // Fetch other user using backend api when waiting room's length becomes 2
     const [otherUser, updateOtherUser] = useState("user1")
+    const [emojiMenuVisible, toggleEmojiMenu] = useState(false)
 
     const messageElements = createMessageComponenets(messages, thisUser, otherUser)
 
@@ -44,6 +46,11 @@ export default function AnonymousChat(props) {
         )
     }
 
+    function pushEmojiToInput (emoji) {
+        let input = document.getElementById("input_field")
+        input.value = input.value + emoji.emoji
+    }
+
     return (
         <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             {/* For making background blur */}
@@ -57,12 +64,13 @@ export default function AnonymousChat(props) {
                                 <div className="mr-16"></div>
                                 <div className="font-bold">{otherUser}</div>
                                 <div>
-                                    <button type="button" className="dark:bg-stone-800 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
+                                    <button type="button" className="dark:bg-stone-800 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:hover:bg-gray-600 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
                                     <button onClick={() => props.close()} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
                                 </div>
                             </div>
                             {otherUser ? (
-                                <div>
+                                <div className="relative flex flex-col z-0 justify-end">
+                                    {emojiMenuVisible && <div className="absolute right-1 ml-auto mb-16 z-10"><EmojiPicker height={400} onEmojiClick={(emoji) => pushEmojiToInput(emoji)} theme="auto" lazyLoadEmojis={true}></EmojiPicker></div>}
                                     <div className="px-6 pb-4">
                                         <div className="flex flex-col-reverse space-y-1 mt-4 -mx-2 h-96 overflow-y-auto scrollbar-indigo">
                                             {messageElements.reverse()}
@@ -76,8 +84,10 @@ export default function AnonymousChat(props) {
                                             <input
                                             type="text"
                                             className="dark:bg-stone-800 dark:text-white flex w-full border border-gray-400 dark:border-gray-600 rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
+                                            id="input_field"
                                             />
-                                            {/* THIS WAS THE EMOJI ICON <button
+                                            <button
+                                            onClick = {() => toggleEmojiMenu(!emojiMenuVisible)}
                                             className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
                                             >
                                             <svg
@@ -94,7 +104,7 @@ export default function AnonymousChat(props) {
                                                 d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                                 ></path>
                                             </svg>
-                                            </button> */}
+                                            </button>
                                         </div>
                                         </div>
                                         <div className="ml-4">

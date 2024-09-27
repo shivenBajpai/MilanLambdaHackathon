@@ -5,13 +5,13 @@ export default function Home() {
     return <div className="dark:text-zinc-50 flex min-h-full flex-col justify-center text-center">
         <div className="mt-10 flex flex-row justify-center content-center">
             <img className="w-20" src="logo.png" alt="" />
-            <h1 className="text-6xl my-auto">IPHAC</h1>
+            <h1 className="text-6xl my-auto">ANOMY</h1>
         </div>
 
         <div className="flex flex-col justify-center pb-14 pt-14">
             <h1 className="font-bold text-6xl mb-8" >Connect with Your College Peers</h1>
             <h1 className="text-indigo-500 text-2xl" >Connect with new people</h1>
-            <p className="mt-4 text-gray-400" >IPHAC pairs you with random students from your college who are online.<br></br>Identities are kept anonymous until both sides agree to reveal.<br></br>Chat, make friends, and expand your network!</p>
+            <p className="mt-4 text-gray-400" >ANOMY pairs you with random students from your college who are online.<br></br>Identities are kept anonymous until both sides agree to reveal.<br></br>Chat, make friends, and expand your network!</p>
             <div className="mt-8">
                 <Link className="px-6 py-4 rounded-md bg-indigo-700 text-white" to="/messages">
                     <button className="text-xl"> Enter Chat Room </button>
@@ -63,9 +63,9 @@ export default function Home() {
 
 
         <div className="mx-10 rounded-lg flex flex-col justify-center py-32 bg-indigo-700 text-center text-white">
-            <h1 className="font-black text-4xl" >About IPHAC</h1>
+            <h1 className="font-black text-4xl" >About ANOMY</h1>
             <p className="my-3">
-                IPHAC is designed to allow you to meet a random mix of people you wouldn't normally meet in your day-to-day campus life.<br></br>
+                ANOMY is designed to allow you to meet a random mix of people you wouldn't normally meet in your day-to-day campus life.<br></br>
                 Our platform aims provides a safe, user-friendly and engaging way to meet new people.<br></br>
             </p>
             <div className="my-3">
