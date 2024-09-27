@@ -184,7 +184,7 @@ def matchmake():
     user2 = queue[0]
     queue = queue[1:]
 
-    anon_id = anon.create_anon({
+    anon_id = anon.add_anon({
         "from_id": user1,
         "to_id": user2,
         "messages": []
