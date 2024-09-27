@@ -6,13 +6,13 @@ from bson.objectid import ObjectId
 
 uri = "mongodb+srv://aritron1806:Am180906@cluster0.s15oq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&authSource=admin"
 
-# Create a new client and connect to the server
+#CREATE CONNECTION TO DB 
 
 client = MongoClient(uri, server_api=ServerApi('1'))
 db = client.Main_DB
 users = db.users
 
-# Send a ping to confirm a successful connection
+#SEND A PING TO CONFIRM CONECTION
 
 try:
     client.admin.command('ping')
@@ -20,7 +20,7 @@ try:
 except Exception as e:
     print(e)
 
-#Users Schema
+#USERS SCHEMA
 
 users_Schema = {
     "$jsonSchema" :{
@@ -59,7 +59,9 @@ users_Schema = {
     }
 }
 
-#Func to create Users collection
+#CRUD FUNCTIONS
+
+#CREATE USERS COLLECTION => NOT FOR CURRENT USE
 
 def create_users():
 
@@ -78,9 +80,11 @@ def create_users():
 
     return users_Schema["$jsonSchema"]["properties"].keys()
 
-#func to add User
+#ADD USER FUNCTION => TAKES Dictionary as in schema except CONTACTS => RETURNS INSERTED ID
 
 def add_user(userDetails:dict):
+
+    userDetails["contacts"] = []
 
     try:
         inserted_record = users.insert_one(userDetails)
@@ -93,11 +97,11 @@ def add_user(userDetails:dict):
             exception = e
         raise Exception(exception)
     
-    return inserted_record.inserted_id
+    return str(inserted_record.inserted_id)
 
-#Read users and find by id
+#READS USERS BY ID => RETURNS OBJECT DICTIONARY
 
-def get_user(id):
+def get_user(id:str):
 
     user = users.find_one({
         "_id" : ObjectId(id)
@@ -109,9 +113,9 @@ def get_user(id):
     
     return user
 
-#update one field of users collection
+#UPDATE ONE FIELD OF THE DICTIONARY => TAKES User_id, NAME OF FIELD AS IN SCHEMA, NEW VALUE FOR FIELD =>  RETURNS UPDATED USER OBJECT DICTIONARY
 
-def update_user(id, field, new_value):
+def update_user(id:str, field:str, new_value:str):
 
     user = users.find_one({
         "_id" : ObjectId(id)
@@ -132,7 +136,9 @@ def update_user(id, field, new_value):
 
     return users.find_one({"_id":ObjectId(id)})
 
-def delete_user(id):
+#DELETES DICTIONARY BY ID => RETURNS 1 IF SUCCESSFUL
+
+def delete_user(id:str):
 
     user = users.find_one({
         "_id" : ObjectId(id)
@@ -147,3 +153,35 @@ def delete_user(id):
     })
 
     return 1
+
+#ADDITIONAL FUNCTIONS
+
+#READS USER BY EMAIL => RETURNS OBJECT DICTIONARY
+
+def get_user_by_email(email:str):
+
+    user = users.find_one({
+        "email" : email
+    })
+
+    if(not user):
+        exception = f"Couldn't find any user with email: {email}"
+        raise Exception(exception)
+    
+    return user
+
+#GET ALL CONTACTS OF AN USER => TAKES ID => RETURNS LIST OF USER ID'S WHICH ARE CONTACTS
+
+def get_contacts(id:str):
+
+    user = users.find_one({
+        "_id": ObjectId(id)
+    })
+
+    if(not user):
+        exception = f"Couldn't find any user with id: {id}"
+        raise Exception(exception)
+    
+    contact_list = user["contacts"]
+    contact_list = [str(x) for x in list(contact_list)]
+    return contact_list
