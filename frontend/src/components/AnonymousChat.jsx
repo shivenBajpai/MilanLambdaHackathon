@@ -22,7 +22,7 @@ export default function AnonymousChat(props) {
             const response = await fetch(apiRoot + '/message/get?'  + new URLSearchParams({
                 from_id: props.thisUser,
                 to_id: otherUser,
-                anon: true,
+                //TODO: anon: true,
                 //timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
               }).toString());
             const data = await response.json();
@@ -42,8 +42,7 @@ export default function AnonymousChat(props) {
         let matched = false
         const matchMake = async () => {
             try {
-
-                const response = await fetch(apiRoot + '/matchmake');
+                const response = await fetch(apiRoot + '/matchmake', {method: "POST"});
                 const id = await response.json().userid;
                 if (response.status == 200) {
                     let response = await fetch(`${apiRoot}/user/${id}`)
@@ -71,7 +70,7 @@ export default function AnonymousChat(props) {
             to_id: otherUser,
             message: input_val,
             timestamp: Date.now(),
-            anon: true
+            // TODO: anon: true
         })
     })}
 

@@ -48,7 +48,7 @@ async function Messages(props) {
           to_id: currentChat,
           message: input_val,
           timestamp: Date.now(),
-          anon: false
+          // anon: false
         })
       })
     }
@@ -94,8 +94,8 @@ async function Messages(props) {
           const response = await fetch(apiRoot + '/message/get?' + new URLSearchParams({
             from_id: props.User_id,
             to_id: currentChat,
-            anon: false,
-            //timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
+            // anon: false,
+            //timestamp: messages.lengtIPHACh>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
           }).toString());
           const data = await response.json();
           if (response.status == 200) {

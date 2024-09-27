@@ -11,7 +11,7 @@ def require_auth(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # Use in testing
-        # return f(*args, **kwargs)
+        return f(*args, **kwargs)
         
         userid = request.cookies.get('userid', None)
         token = request.cookies.get('token', None)
@@ -93,9 +93,8 @@ def get_message():
             and to_id != request.cookies.get('userid'):
             return {"err": "Unauthorized"}, 401
         anon = request.args.get('anon', None)
-        timestamp = datetime.from_timestamp(int(request.args.get('timestamp', None)))
-        msg = users.get_message(from_id, to_id, anon, timestamp)
-        msg['_id'] = str(msg['_id'])
+        timestamp = datetime.fromtimestamp(int(request.args.get('timestamp', 0)))
+        msg = messages.get_message(from_id, to_id, anon, timestamp)
         return msg
     except Exception as e:
         return {"err": str(e)}, 500
