@@ -161,7 +161,6 @@ def delete_anon(anon_id: str):
         return {"err": str(e)}, 500
 
 queue = []
-
 to_be_informed = {}
 
 @api.route('/matchmake', methods=['POST'])
@@ -193,5 +192,5 @@ def matchmake():
         "messages": []
     })
 
-    convo = anon.get_anon(anon_id)
+    convo = anon.get_anon_dict(anon_id)
     return convo
