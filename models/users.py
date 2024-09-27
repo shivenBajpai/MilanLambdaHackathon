@@ -37,7 +37,7 @@ except Exception as e:
 users_Schema = {
     "$jsonSchema" :{
         "bsonType": "object",
-        "required": ["username", "email", "gender", "pfp", "OAuth"],
+        "required": ["username", "email", "pfp", "contacts"],
         "properties": {
             "username": {
                 "bsonType": "string",
@@ -47,23 +47,14 @@ users_Schema = {
                 "bsonType": "string",
                 "description": "Must be a string containing @"
             },
-            "gender": {
-                "bsonType": "string",
-                "enum": ["Male", "Female", "Other"],
-                "description": "Must be a string in [\"Male\", \"Female\", \"Other\"]"
-            },
             "pfp": {
                 "bsonType": "string",
                 "description": "Must be an URL"
             },
-            "OAuth": {
-                "bsonType": "string",
-                "description": "Must be an OAuth token"
-            },
             "contacts": {
                 "bsonType": "array",
                 "items": {
-                    "bsonType": "objectID",
+                    "bsonType": "objectId",
                     "description": "It's the id of the users, the Current User has a DM open with."
                 }
             }
@@ -101,6 +92,7 @@ def add_user(userDetails:dict):
     try:
         inserted_record = users.insert_one(userDetails)
     except Exception as e:
+        raise e
         if e.__class__.__name__ == "DuplicateKeyError":
             exception = f"User with either Username: {userDetails['username']} or Email: {userDetails['email']} already exists in the users collection."
             raise DuplicateKeyError(exception)
@@ -148,7 +140,11 @@ def update_user(id:str, field:str, new_value:str):
         }
     })
 
-    return users.find_one({"_id":ObjectId(id)})
+    user = users.find_one({"_id":ObjectId(id)})
+
+    user["contacts"] = [str(x) for x in user["contacts"]]
+
+    return user
 
 #DELETES DICTIONARY BY ID => RETURNS 1 IF SUCCESSFUL
 
@@ -184,7 +180,7 @@ def get_user_by_email(email:str):
 
     return user
 
-#GET ALL CONTACTS OF AN USER => TAKES ID => RETURNS LIST OF USER ID'S WHICH ARE CONTACTS
+#GET ALL CONTACTS OF AN USER => TAKES ID => RETURNS LIST OF USER DICTIONARY OBJECTS CORRESPONDING TO ALL CONTACTS
 
 def get_contacts(id:str):
 
@@ -197,5 +193,13 @@ def get_contacts(id:str):
         raise NotFoundError(exception)
 
     contact_list = user["contacts"]
-    contact_list = [str(x) for x in list(contact_list)]
-    return contact_list
+
+    return_object = []
+
+    for i in contact_list:
+        contacted_user = users.find_one({
+            "_id": ObjectId(i)
+        })
+        return_object.append(contacted_user)
+
+    return return_object
