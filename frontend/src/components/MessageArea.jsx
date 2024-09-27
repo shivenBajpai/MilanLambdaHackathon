@@ -41,7 +41,7 @@ export default function MessageArea(props) {
 
     const newMessageElements = createMessageComponenets(messages, props.User_id, props.other_user.username, props.other_user.pfp)
 
-    return <div className="flex flex-col flex-auto h-full p-6">
+    return <div className="flex flex-col flex-auto h-full p-6 relative">
     <div
       className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-200 dark:bg-stone-800 h-full p-4"
     >
