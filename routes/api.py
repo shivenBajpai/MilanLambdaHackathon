@@ -167,13 +167,13 @@ to_be_informed = {}
 @require_auth
 def matchmake(): 
     global queue
+    print(queue)
     user1 = request.cookies.get('userid')
 
     if user1 in to_be_informed:
         anon_id = to_be_informed[user1]
         del to_be_informed[user1]
-        convo = anon.get_anon(anon_id)
-        convo['_id'] = str(convo['_id'])
+        convo = anon.get_anon_dict(anon_id)
         return convo 
 
     if not queue:
@@ -193,4 +193,5 @@ def matchmake():
     })
 
     convo = anon.get_anon_dict(anon_id)
+    to_be_informed[user2] = anon_id
     return convo

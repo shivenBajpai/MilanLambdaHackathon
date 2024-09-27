@@ -202,6 +202,7 @@ def get_message(from_id:str, to_id:str, anon=None, timestamp=None):
     query = {
         "from_id": ObjectId(from_id),
         "to_id": ObjectId(to_id),
+        "anon": anon
     }
 
     if(timestamp):
