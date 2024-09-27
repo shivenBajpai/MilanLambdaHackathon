@@ -17,7 +17,6 @@ users = db.users
 anon_convos = db.anon
 
 #EXCEPTIONS
-
 class NotFoundError(Exception):
     pass
 
@@ -135,14 +134,33 @@ def add_message(messageDetails:dict, anon=None):
             "_id": ObjectId(anon)
         },
         {
-            "$push": {
+            "$addToSet": {
                 "messages": inserted_record.inserted_id
+            }
+        })
+
+    if(not anon):
+        users.update_one({
+            "_id": ObjectId(messageDetails["from_id"])
+        },
+        {
+            "$addToSet": {
+                "contacts": ObjectId(messageDetails["to_id"])
+            }
+        })
+
+        users.update_one({
+            "_id": ObjectId(messageDetails["to_id"])
+        },
+        {
+            "$addToSet": {
+                "contacts": ObjectId(messageDetails["from_id"])
             }
         })
     
     return str(inserted_record.inserted_id)
 
-#READ MESSAGES BETWEEN 2 USERS SORTED BY TIMESTAMP => TAKES FROM AND TO ID'S AND OPTIONAL ARGS ARE ANON AND TIMESTAMP => RETURN LIST OF MESSAGE OBJECT DICTIONARIES
+#READ MESSAGES BETWEEN 2 USERS SORTED BY TIMESTAMP => TAKES FROM AND TO ID'S AND OPTIONAL ARGS ARE ANON AND TIMESTAMP => RETURN LIST OF MESSAGE OBJECT DICTIONARIES SORTED BY TIMESTAMP
 #IF ANON PARAM IS GIVEN AS ANON CONVO ID, GIVES MESSAGES FROM ANON CONVO ONLY
 #IF TIMESTAMP IS GIVEN, SENDS MESSAGES AFTER PARTICULAR TIMESTAMP ONLY [GREATER THAN OR EQUAL TO]
 #ADDS USER1 TO USER2'S CONTACT LIST AND VICE VERSA IF CONTACT DOESN'T EXIST ALREADY
@@ -175,25 +193,6 @@ def get_message(from_id:str, to_id:str, anon=None, timestamp=None):
         if(not anon_event):
             exception = f"Anonymous conversation with id:{anon} not found."
             raise NotFoundError(exception)
-        
-    if(not anon):
-        users.update_one({
-            "_id": ObjectId(from_id)
-        },
-        {
-            "$addToSet": {
-                "contacts": ObjectId(to_id)
-            }
-        })
-
-        users.update_one({
-            "_id": ObjectId(to_id)
-        },
-        {
-            "$addToSet": {
-                "contacts": ObjectId(from_id)
-            }
-        })
 
     query = {
         "from_id": ObjectId(from_id),
@@ -216,11 +215,38 @@ def get_message(from_id:str, to_id:str, anon=None, timestamp=None):
     message_list = list(message_list_from) + list(message_list_to)
 
     if(len(message_list) == 0):
-        return message_list
-    
-    message_list_sorted = sorted(message_list, key=lambda d:d['timestamp'])
+        message_list_sorted = message_list
+    else:
+        message_list_sorted = sorted(message_list, key=lambda d:d['timestamp'])
 
-    return list(message_list_sorted)   
+    if(not anon):
+
+        return_object = {
+            "message_list": message_list_sorted,
+            "anon_list": []
+        }
+
+        anon_event_list_from = list(anon_convos.find({
+            "from_id": ObjectId(from_id),
+            "to_id": ObjectId(to_id),
+            "reveal": 3
+        }))
+
+        anon_event_list_to = list(anon_convos.find({
+            "from_id": ObjectId(to_id),
+            "to_id": ObjectId(from_id),
+            "reveal": 3
+        }))
+
+        anon_event_list = anon_event_list_from + anon_event_list_to
+
+        for i in anon_event_list:
+            return_object["anon_list"].append(str(i["_id"]))
+            
+    else:
+        return_object = list(message_list_sorted)
+
+    return return_object  
 
 #UPDATE MESSAGE CONTENT BY ID => TAKES MESSAGE ID AND NEW MESSAGE VALUE =>  RETURNS UPDATED MESSAGE OBJECT DICTIONARY
 

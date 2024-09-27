@@ -105,7 +105,6 @@ def add_user(userDetails:dict):
             exception = f"User with either Username: {userDetails["username"]} or Email: {userDetails["email"]} already exists in the users collection."
             raise DuplicateKeyError(exception)
         elif e.__class__.__name__ == "WriteError":
-            raise e
             exception = "Check userSchema. Input values are not according to it"
             raise WriteError(exception)
         else:
@@ -185,7 +184,7 @@ def get_user_by_email(email:str):
     
     return user
 
-#GET ALL CONTACTS OF AN USER => TAKES ID => RETURNS LIST OF USER ID'S WHICH ARE CONTACTS
+#GET ALL CONTACTS OF AN USER => TAKES ID => RETURNS LIST OF USER DICTIONARY OBJECTS CORRESPONDING TO ALL CONTACTS
 
 def get_contacts(id:str):
 
@@ -198,5 +197,13 @@ def get_contacts(id:str):
         raise NotFoundError(exception)
     
     contact_list = user["contacts"]
-    contact_list = [str(x) for x in list(contact_list)]
-    return contact_list
+    
+    return_object = []
+
+    for i in contact_list:
+        contacted_user = users.find_one({
+            "_id": ObjectId(i)
+        })
+        return_object.append(contacted_user)
+
+    return return_object
