@@ -42,7 +42,7 @@ async function Messages(props) {
         method:"POST",
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({
-          from_id: props.User_id, // TODO: Need logged in users info
+          from_id: props.User_id,
           to_id: currentChat,
           message: input_val,
           timestamp: Date.now(),
@@ -69,7 +69,7 @@ async function Messages(props) {
             for (const id of new_contacts_ids) {
               new_contacts.push(await (await fetch(`${apiRoot}/user/${id}`)).json())
             }
-
+            
             setContacts(new_contacts);
           }
 
@@ -100,9 +100,10 @@ async function Messages(props) {
     }
 
     const contactElements = contacts.map((contact) => {
+      const style = currentChat==contact._id ? " dark:bg-zinc-700 bg-gray-100" : ""
         return (
             <button
-                className="flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" onClick={() => {changeCurrentChat(contact._id)}}
+                className={"flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" + style} onClick={() => {changeCurrentChat(contact._id)}}
             >
                 <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" crossOrigin="anonymous" src={contact.pfp}></img>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
@@ -116,7 +117,6 @@ async function Messages(props) {
         )
     })
 
-    // TODO: Pass other users ID as a prop
     return <div className="flex h-screen antialiased text-gray-900">
             {AnonymousChatOpen && <AnonymousChat thisUser={props.User_id} close={toggleAnonymousChatOpen}></AnonymousChat>}
             <div className="md:flex flex-row h-full w-full overflow-x-hidden">

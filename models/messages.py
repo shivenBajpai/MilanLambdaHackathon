@@ -83,7 +83,7 @@ def create_messages():
 #ADD MESSAGE ENTRY => TAKES DICTIONARY AS IN SCHEMA EXCEPT ANON [WHICH IT EITHER TAKES AS A CONVO ID OR NULL] => RETURS INSERTED ID
 #ADDS INSERTED MESSAGE ID TO THE RESPECTIVE ANON CONVO IF ANON PARAM IS GIVEN IN THE FORM OF ANON ID
 
-def add_message(messageDetails:dict, anon=None):
+def add_message(messageDetails:dict):
 
     user1 = users.find_one({
         "_id": ObjectId(messageDetails["from_id"])
@@ -100,6 +100,8 @@ def add_message(messageDetails:dict, anon=None):
     if(user1 == user2):
         exception = "Both User ids are same"
         raise Exception(exception)
+    
+    anon = messageDetails.get("anon", None)
     
     if(not anon):
         messageDetails["anon"] = None
@@ -123,7 +125,6 @@ def add_message(messageDetails:dict, anon=None):
     try:
         inserted_record = messages.insert_one(messageDetails)
     except Exception as e:
-        raise e
         if e.__class__.__name__ == "WriteError":
             exception = "Check messageSchema. Input values are not according to it"
             raise WriteError(exception)
@@ -201,6 +202,7 @@ def get_message(from_id:str, to_id:str, anon=None, timestamp=None):
     query = {
         "from_id": ObjectId(from_id),
         "to_id": ObjectId(to_id),
+        "anon": anon
     }
 
     if(timestamp):
