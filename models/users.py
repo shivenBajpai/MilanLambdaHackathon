@@ -92,6 +92,7 @@ def add_user(userDetails:dict):
     try:
         inserted_record = users.insert_one(userDetails)
     except Exception as e:
+        raise e
         if e.__class__.__name__ == "DuplicateKeyError":
             exception = f"User with either Username: {userDetails['username']} or Email: {userDetails['email']} already exists in the users collection."
             raise DuplicateKeyError(exception)

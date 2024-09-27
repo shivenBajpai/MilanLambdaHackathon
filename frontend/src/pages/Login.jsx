@@ -1,5 +1,10 @@
 
 export default function Login() {
+
+    window.location.reload()
+
+    return <></>
+
     return (
         <>
            <div className="dark:bg-stone-800 flex min-h-full flex-col justify-center px-6 py-12 mt-16">

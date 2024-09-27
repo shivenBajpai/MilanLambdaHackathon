@@ -5,19 +5,93 @@ import { apiRoot } from "../pages/Messages"
 export default async function AnonymousChat(props) {
     // As soon as meet a stranger button is clicked we send a post request to server
     // and add the thisUser's id to the meeting list, if it's already not there
-    const thisUser = props.thisUser
-    const otherUser_id = props.otherUser
-    
-    let response = await fetch(`${apiRoot}/user/${otherUser_id}`)
-    const otherUser = await response.json()
 
     // Using the same layout for both disconnected and finding person modal, just change fucntion
     // parameters ("dc" for disconnected modal and leave if empty for normal one)
+    
+    const [otherUser, setOtherUser] = useState(null)
+    const [messages, setMessages] = useState([])
+    const [dcStatus, setDcStatus] = useState(false)
+
+    let revealed = false;
+    
+    // // Fetching messages
+    // useEffect(() => {
+    //     const fetchMessages = async () => {
+    //       try {
+    //         const response = await fetch(apiRoot + '/message/get?',  + new URLSearchParams({
+    //             from_id: props.User_id,
+    //             to_id: otherUser_id,
+    //             anon: true,
+    //             //timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
+    //           }).toString());
+    //         const data = await response.json();
+    //         if (response.status == 200) setMessages(data);
+    //       } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //       }
+    //     };
+    
+    //     fetchMessages();
+    //     const interval = setInterval(fetchMessages, 1000);
+    
+    //     return () => clearInterval(interval);
+    // }, []);
+
+    // useEffect(() => {
+    //     let matched = false
+    //     const matchMake = async () => {
+    //         try {
+
+    //             const response = await fetch(apiRoot + '/matchmake');
+    //             const id = await response.json().userid;
+    //             if (response.status == 200) {
+    //                 let response = await fetch(`${apiRoot}/user/${id}`)
+    //                 const otherUser = await response.json()
+    //             }
+    //             else throw err(`Code: ${response.status}`)
+    //         } catch (error) {
+
+    //             console.error('Error trying to match make:', error);
+    //         }
+    //     }
+        
+    //     matchMake();
+    //     if (!matched) return () => clearInterval(setInterval(matchMake, 1000));
+    // }, []);
+
+    async function sendMessage() {
+        let input = document.getElementById("input_field")
+        let input_val = input.value
+        input.value = ""
+        if (input_val != "") fetch(apiRoot + '/message/create', {
+            method:"POST",
+            body: JSON.stringify({
+            from_id: User_id, // TODO: Need logged in users info
+            to_id: otherUser_id,
+            message: input_val,
+            timestamp: Date.now(),
+            anon: true
+        })
+    })}
+
+    async function proposeReveal() {
+        
+    }
+
+    async function disconnect() {
+        setDcStatus(false);
+    }
+
+    function handleKeyDown(e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }};
+
     function anonModal(state) {
         return (
             <div className="mb-4 text-center font-bold text-indigo-700 flex flex-col">
-            {state == "dc" ? <h1 className="text-indigo-400">Previous person disconnected, Finding someone else for you to talk to</h1> : <h1>Finding someone for you to talk to</h1>}
-            <p className="font-normal text-black mb-4">Please be patient ^_^</p>
+            {state == "dc" ? <h1 className="text-indigo-400">The other person disconnected, you may close the window.</h1> : <><h1>Finding someone for you to talk to</h1><p className="font-normal text-black mb-4">Please be patient ^_^</p></>}
             <div className="flex justify-center"role="status">
                 <svg aria-hidden="true" class="w-8 h-8 text-gray-100 animate-spin dark:text-gray-200 fill-indigo-800" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -28,155 +102,8 @@ export default async function AnonymousChat(props) {
         </div>
         )
     }
-    let revealed = false;
 
-    const [messages, setMessages] = useState([])
-
-    // Fetching messages
-    useEffect(() => {
-        const fetchMessages = async () => {
-          try {
-            const response = await fetch(apiRoot + '/message', {
-              from_id: User_id,
-              to_id: otherUser_id,
-              anon: true,
-                //timestamp: messages.length>0?null:messages[messages.length-1].timestamp TODO: Optimize to use after condition, adjust to have from_id and to_id
-            });
-            const data = await response.json();
-            if (response.status == 200) setMessages(data);
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        };
-    
-        fetchMessages();
-        const interval = setInterval(fetchMessages, 1000);
-    
-        return () => clearInterval(interval);
-    }, []);
-
-    async function sendMessage() {
-    let input = document.getElementById("input_field")
-    let input_val = input.value
-    input.value = ""
-    if (input_val != "") fetch(apiRoot + '/message/create', {
-        method:"POST",
-        body: JSON.stringify({
-        from_id: User_id, // TODO: Need logged in users info
-        to_id: otherUser_id,
-        message: input_val,
-        timestamp: Date.now(),
-        anon: true
-        })
-    })
-    }
-
-    function handleKeyDown(e) {
-    if (e.key === 'Enter') {
-        sendMessage();
-    }
-    };
-
-    // const messages = [
-    //     {
-    //         id: 2,
-    //         author: "Me",
-    //         timestamp: 1727180920,
-    //         text: "Hey how are you?",
-
-    //     },
-    //     {
-    //         id: 1,
-    //         author: "Anonymous",
-    //         timestamp: 1727180924,
-    //         text: "Great amazing",
-    //     },
-    //     {
-    //         id: 0,
-    //         author: "Anonymous",
-    //         timestamp: 1727180924,
-    //         text: "Boohoo",
-    //     },
-    //     {
-    //         id: 3,
-    //         author: "Me",
-    //         timestamp: 1727180925,
-    //         text: "who r u? oh aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    //     },
-    //     {
-    //         id: 4,
-    //         author: "Me",
-    //         timestamp: 1827190928,
-    //         text: "Tommy",
-    //     },
-    //     {
-    //         id: 4,
-    //         author: "Anonymous",
-    //         timestamp: 1827190929,
-    //         text: "lollllll",
-    //     },
-    //     {
-    //         id: 3,
-    //         author: "Me",
-    //         timestamp: 1827190930,
-    //         text: "lollllll",
-    //     },
-    //     {
-    //         id: 3,
-    //         author: "Me",
-    //         timestamp: 1827190931,
-    //         text: "lollllll",
-    //     },
-    //     {
-    //         id: 7,
-    //         author: "Anonymous",
-    //         timestamp: 1827190932,
-    //         text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    //     },
-    //     {
-    //         id: 7,
-    //         author: "Anonymous",
-    //         timestamp: 1827190932,
-    //         text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    //     },
-    //     {
-    //         id: 7,
-    //         author: "Anonymous",
-    //         timestamp: 1827190932,
-    //         text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    //     },
-    //     {
-    //         id: 7,
-    //         author: "Me",
-    //         timestamp: 1827190932,
-    //         text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    //     },
-    //     {
-    //         id: 7,
-    //         author: "Me",
-    //         timestamp: 1827190932,
-    //         text: "lollll",
-    //     },
-    //     {
-    //         id: 7,
-    //         author: "Me",
-    //         timestamp: 1827190932,
-    //         text: "lollll",
-    //     },
-    //     {
-    //         id: 7,
-    //         author: "Anonymous",
-    //         timestamp: 1827190932,
-    //         text: "lollll",
-    //     },
-    //     {
-    //         id: 7,
-    //         author: "Me",
-    //         timestamp: 1827190932,
-    //         text: "lollll",
-    //     }
-    // ]
-
+    const thisUser = props.thisUser
     const messageElements = createMessageComponenets(messages, thisUser, revealed?otherUser:"Anonymous", '/profile.png')
 
     return (
@@ -192,8 +119,8 @@ export default async function AnonymousChat(props) {
                                 <div className="mr-16"></div>
                                 <div className="font-bold">{revealed?otherUser:"Anonymous"}</div>
                                 <div>
-                                    <button type="button" className="dark:bg-stone-800 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
-                                    <button onClick={() => props.close()} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
+                                    <button onClick={proposeReveal} type="button" className="dark:bg-stone-800 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
+                                    <button onClick={async () => {props.close();await disconnect()}} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
                                 </div>
                             </div>
                             {otherUser ? (
@@ -260,7 +187,7 @@ export default async function AnonymousChat(props) {
                                         </div>
                                     </div>
                                 </div>
-                            ) : (anonModal())}
+                            ) : (anonModal(dcStatus))}
                         </div>
                     </div>
                 </div>
