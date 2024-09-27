@@ -104,7 +104,7 @@ async function Messages(props) {
             <button
                 className="flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" onClick={() => {changeCurrentChat(contact._id)}}
             >
-                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" src={contact.pfp}></img>
+                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" crossOrigin="anonymous" src={contact.pfp}></img>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
                 {/* Unread messages */}
                 {/* <div
@@ -134,6 +134,7 @@ async function Messages(props) {
                 >
                   <div className="h-20 w-20 rounded-full border overflow-hidden">
                     <img
+                      crossOrigin="anonymous"
                       src={User.pfp}
                       alt="Avatar"
                       className="h-full w-full"

@@ -41,7 +41,7 @@ export default function createMessageComponenets(messages, thisUser, other_user,
                     <div className="flex flex-col">
                         {topUser && <div className="font-bold ml-14 dark:text-indigo-400 text-indigo-500">{other_user + ":"}</div>}
                         <div className="flex flex-row items-center">
-                        {topUser && <img className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0" src={other_user_pfp}></img>}
+                        {topUser && <img crossOrigin="anonymous" className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0" src={other_user_pfp}></img>}
                         <div
                             className="dark:bg-stone-700 dark:text-white relative ml-3 text-md bg-white py-2 px-4 shadow rounded-xl"
                         >
