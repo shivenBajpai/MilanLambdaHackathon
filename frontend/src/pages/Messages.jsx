@@ -2,10 +2,19 @@ import AnonymousChat from "../components/AnonymousChat"
 import React, { useEffect, useState } from "react"
 import createMessageComponenets from "../util/util"
 
-const apiRoot = "https://66f59c6c436827ced974918d.mockapi.io/api"
+export const apiRoot = "https://66f59c6c436827ced974918d.mockapi.io/api"
 
-export default function Messages() {
-    const User = "Me"
+export default async function Messages() {
+    //const User = "Me"
+    // TODO: Might have to add 'credentials: include' to the requests
+    const User_id = 100;
+    let User = null;
+
+    let User_response = await fetch(`${apiRoot}/user/${User_id}`)
+    if (User_response.status == 200) {
+      User = await User_response.json()
+    }
+
     const [currentChat, changeCurrentChat] = React.useState(null)
     const [AnonymousChatOpen, toggleAnonymousChatOpen] = React.useState(false)
 
@@ -23,7 +32,7 @@ export default function Messages() {
       if (input_val != "") fetch(apiRoot + '/message/create', {
         method:"POST",
         body: JSON.stringify({
-          from_id: "", // TODO: Need logged in users info
+          from_id: User_id, // TODO: Need logged in users info
           to_id: currentChat,
           message: input_val,
           timestamp: Date.now(),
@@ -46,9 +55,11 @@ export default function Messages() {
     useEffect(() => {
       const fetchContacts = async () => {
         try {
-          const response = await fetch(apiRoot + '/contacts');
+          const response = await fetch(apiRoot + '/contacts', {
+            
+          });
           const data = await response.json();
-          setContacts(data);
+          if (response.status == 200) setContacts(data);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -63,10 +74,16 @@ export default function Messages() {
     // Fetching messages
     useEffect(() => {
       const fetchMessages = async () => {
+        if (currentChat == null) return;
         try {
-          const response = await fetch(apiRoot + '/message'); // TODO: Optimize to use after condition, adjust to have from_id and to_id
+          const response = await fetch(apiRoot + '/message', {
+            from_id: User_id,
+            to_id: currentChat,
+            anon: false,
+            //timestamp: messages.length>0?null:messages[messages.length-1].timestamp TODO: Optimize to use after condition, adjust to have from_id and to_id
+          });
           const data = await response.json();
-          setMessages(data);
+          if (response.status == 200) setMessages(data);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -78,12 +95,12 @@ export default function Messages() {
       return () => clearInterval(interval);
     }, []);
 
-    const newMessageElements = createMessageComponenets(messages, User, other_user, other_user_pfp)
+    const newMessageElements = createMessageComponenets(messages, User_id, other_user, other_user_pfp)
 
     const contactElements = contacts.map((contact) => {
         return (
             <button
-                className="flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" onClick={() => changeCurrentChat(contact.id)}
+                className="flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" onClick={() => {changeCurrentChat(contact.id); setMessages([])}}
             >
                 <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" src={contact.pfp}></img>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
@@ -96,10 +113,10 @@ export default function Messages() {
             </button>
         )
     })
-
+    // TODO: Pass other users ID as a prop
     return (
         <div className="flex h-screen antialiased text-gray-900">
-            {AnonymousChatOpen && <AnonymousChat thisUser={User} close={toggleAnonymousChatOpen}></AnonymousChat>}
+            {AnonymousChatOpen && <AnonymousChat thisUser={User_id} close={toggleAnonymousChatOpen} otherUser={""}></AnonymousChat>}
             <div className="flex flex-row h-full w-full overflow-x-hidden">
               <div className="dark:bg-stone-800 dark:text-zinc-50 flex flex-col py-8 pl-6 pr-2 w-64 bg-transparent flex-shrink-0">
                 <div className="flex flex-row items-center justify-center h-12 w-full">

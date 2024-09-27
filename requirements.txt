@@ -9,3 +9,4 @@ pymongo[srv]
 Flask-PyMongo
 pytz
 authlib
+requests

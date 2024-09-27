@@ -1,30 +1,15 @@
 import React, { useEffect, useState } from "react"
 import createMessageComponenets from "../util/util"
+import { apiRoot } from "../pages/Messages"
 
-export default function AnonymousChat(props) {
+export default async function AnonymousChat(props) {
     // As soon as meet a stranger button is clicked we send a post request to server
     // and add the thisUser's id to the meeting list, if it's already not there
     const thisUser = props.thisUser
-    const messages = [
-        {
-            id: 2,
-            author: "Me",
-            timestamp: 1727180920,
-            text: "Hey how are you?",
-
-        },
-        {
-            id: 1,
-            author: "Anonymous",
-            timestamp: 1727180924,
-            text: "Great amazing",
-        },
-    ]
-
-    // Fetch other user using backend api when waiting room's length becomes 2
-    const [otherUser, updateOtherUser] = useState("user1")
-
-    const messageElements = createMessageComponenets(messages, thisUser, otherUser)
+    const otherUser_id = props.otherUser
+    
+    let response = await fetch(`${apiRoot}/user/${otherUser_id}`)
+    const otherUser = await response.json()
 
     // Using the same layout for both disconnected and finding person modal, just change fucntion
     // parameters ("dc" for disconnected modal and leave if empty for normal one)
@@ -43,6 +28,156 @@ export default function AnonymousChat(props) {
         </div>
         )
     }
+    let revealed = false;
+
+    const [messages, setMessages] = useState([])
+
+    // Fetching messages
+    useEffect(() => {
+        const fetchMessages = async () => {
+          try {
+            const response = await fetch(apiRoot + '/message', {
+              from_id: User_id,
+              to_id: otherUser_id,
+              anon: true,
+                //timestamp: messages.length>0?null:messages[messages.length-1].timestamp TODO: Optimize to use after condition, adjust to have from_id and to_id
+            });
+            const data = await response.json();
+            if (response.status == 200) setMessages(data);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+    
+        fetchMessages();
+        const interval = setInterval(fetchMessages, 1000);
+    
+        return () => clearInterval(interval);
+    }, []);
+
+    async function sendMessage() {
+    let input = document.getElementById("input_field")
+    let input_val = input.value
+    input.value = ""
+    if (input_val != "") fetch(apiRoot + '/message/create', {
+        method:"POST",
+        body: JSON.stringify({
+        from_id: User_id, // TODO: Need logged in users info
+        to_id: otherUser_id,
+        message: input_val,
+        timestamp: Date.now(),
+        anon: true
+        })
+    })
+    }
+
+    function handleKeyDown(e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+    };
+
+    // const messages = [
+    //     {
+    //         id: 2,
+    //         author: "Me",
+    //         timestamp: 1727180920,
+    //         text: "Hey how are you?",
+
+    //     },
+    //     {
+    //         id: 1,
+    //         author: "Anonymous",
+    //         timestamp: 1727180924,
+    //         text: "Great amazing",
+    //     },
+    //     {
+    //         id: 0,
+    //         author: "Anonymous",
+    //         timestamp: 1727180924,
+    //         text: "Boohoo",
+    //     },
+    //     {
+    //         id: 3,
+    //         author: "Me",
+    //         timestamp: 1727180925,
+    //         text: "who r u? oh aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    //     },
+    //     {
+    //         id: 4,
+    //         author: "Me",
+    //         timestamp: 1827190928,
+    //         text: "Tommy",
+    //     },
+    //     {
+    //         id: 4,
+    //         author: "Anonymous",
+    //         timestamp: 1827190929,
+    //         text: "lollllll",
+    //     },
+    //     {
+    //         id: 3,
+    //         author: "Me",
+    //         timestamp: 1827190930,
+    //         text: "lollllll",
+    //     },
+    //     {
+    //         id: 3,
+    //         author: "Me",
+    //         timestamp: 1827190931,
+    //         text: "lollllll",
+    //     },
+    //     {
+    //         id: 7,
+    //         author: "Anonymous",
+    //         timestamp: 1827190932,
+    //         text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    //     },
+    //     {
+    //         id: 7,
+    //         author: "Anonymous",
+    //         timestamp: 1827190932,
+    //         text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    //     },
+    //     {
+    //         id: 7,
+    //         author: "Anonymous",
+    //         timestamp: 1827190932,
+    //         text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    //     },
+    //     {
+    //         id: 7,
+    //         author: "Me",
+    //         timestamp: 1827190932,
+    //         text: "lollllllaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    //     },
+    //     {
+    //         id: 7,
+    //         author: "Me",
+    //         timestamp: 1827190932,
+    //         text: "lollll",
+    //     },
+    //     {
+    //         id: 7,
+    //         author: "Me",
+    //         timestamp: 1827190932,
+    //         text: "lollll",
+    //     },
+    //     {
+    //         id: 7,
+    //         author: "Anonymous",
+    //         timestamp: 1827190932,
+    //         text: "lollll",
+    //     },
+    //     {
+    //         id: 7,
+    //         author: "Me",
+    //         timestamp: 1827190932,
+    //         text: "lollll",
+    //     }
+    // ]
+
+    const messageElements = createMessageComponenets(messages, thisUser, revealed?otherUser:"Anonymous", '/profile.png')
 
     return (
         <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -55,7 +190,7 @@ export default function AnonymousChat(props) {
                         <div className="dark:bg-stone-800 dark:text-white flex flex-col bg-gray-50 px-4 py-3 sm:flex sm:flex-col sm:px-6">
                             <div className="flex justify-between">
                                 <div className="mr-16"></div>
-                                <div className="font-bold">{otherUser}</div>
+                                <div className="font-bold">{revealed?otherUser:"Anonymous"}</div>
                                 <div>
                                     <button type="button" className="dark:bg-stone-800 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
                                     <button onClick={() => props.close()} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
@@ -74,7 +209,9 @@ export default function AnonymousChat(props) {
                                         <div className="flex-grow ml-4">
                                         <div className="relative w-full">
                                             <input
+                                            id="input_field"
                                             type="text"
+                                            onKeyDown={handleKeyDown}
                                             className="dark:bg-stone-800 dark:text-white flex w-full border border-gray-400 dark:border-gray-600 rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
                                             />
                                             {/* THIS WAS THE EMOJI ICON <button
@@ -99,6 +236,7 @@ export default function AnonymousChat(props) {
                                         </div>
                                         <div className="ml-4">
                                         <button
+                                            onClick={sendMessage}
                                             className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
                                         >
                                             <span>Send</span>
