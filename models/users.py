@@ -105,6 +105,7 @@ def add_user(userDetails:dict):
             exception = f"User with either Username: {userDetails["username"]} or Email: {userDetails["email"]} already exists in the users collection."
             raise DuplicateKeyError(exception)
         elif e.__class__.__name__ == "WriteError":
+            raise e
             exception = "Check userSchema. Input values are not according to it"
             raise WriteError(exception)
         else:
