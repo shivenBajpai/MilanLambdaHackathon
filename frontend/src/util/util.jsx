@@ -57,7 +57,7 @@ export default function createMessageComponenets(messages, thisUser, other_user,
                                 )}
                             </div>
                         </div>
-                        {crudButton(messages[i].id)}
+                        {crudButton(messages[i]._id)}
                     </div>
                 </div>
             )
@@ -70,7 +70,7 @@ export default function createMessageComponenets(messages, thisUser, other_user,
             const topUser = (i != (messages.length-1) && ((messages[i].from_id == messages[i+1].from_id) &&  i != 0 && messages[i].from_id != messages[i-1].from_id) || ( i != 0 && messages[i-1].from_id == thisUser))
             messageElements.push(
                 <div className={"col-start-1 col-end-8 rounded-lg" + spacing + margin}>
-                    {crudButton(messages[i].id)}
+                    {crudButton(messages[i]._id)}
                     <div className="flex flex-col">
                         {topUser && <div className="font-bold ml-14 dark:text-indigo-400 text-indigo-500">{other_user + ":"}</div>}
                         <div className="flex flex-row items-center">
