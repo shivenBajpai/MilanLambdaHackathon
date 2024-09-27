@@ -9,38 +9,18 @@ export default async function MessageWrapper() {
     const User_id = document.cookie.split('; ').filter(row => row.startsWith('userid=')).map(c=>c.split('=')[1])[0]
     
     if (User_id == undefined) return <Navigate to="/login" />
-
-    let contacts = []
-
-    try {
-      let response = await fetch(`${apiRoot}/user/${User_id}`)
-      if (response.status == 200) {
-        
-        let new_contacts_ids = (await response.json()).contacts;
-
-        for (const id of new_contacts_ids) {
-          contacts.push(await (await fetch(`${apiRoot}/user/${id}`)).json())
-        }
-      }
-
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
     
-    const messageElement = await Messages({User_id, contacts}).catch((err) => console.log(err));
+    const messageElement = await Messages({User_id}).catch((err) => console.log(err));
     return <div>{messageElement}</div>
 }
 
 async function Messages(props) {
 
-    const [currentChat, changeCurrentChat] = useState(null)
-    // const [AnonymousChatOpen, toggleAnonymousChatOpen] = useState(false)
-    // // Should be given as json ordeindigo according to timestamp
-    // const [messages, setMessages] = useState([])
-
-    // const currentChat = null;
-    const AnonymousChatOpen = false;
-    const messages = [];
+    const [currentChat, changeCurrentChat] = React.useState(null)
+    const [AnonymousChatOpen, toggleAnonymousChatOpen] = React.useState(false)
+    // Should be given as json ordeindigo according to timestamp
+    const [messages, setMessages] = useState([])
+    const [contacts, setContacts] = useState([])
 
     let other_user = null
     let other_user_pfp = null
@@ -79,42 +59,69 @@ async function Messages(props) {
       }
     };
 
+    // Fetching Contacts
+    useEffect(() => {
+      const fetchContacts = async () => {
+        try {
+          let response = await fetch(`${apiRoot}/user/${props.User_id}`)
+          if (response.status == 200) {
+            let new_contacts_ids = (await response.json()).contacts;
+            let new_contacts = [];
+            
+            for (const id of new_contacts_ids) {
+              new_contacts.push(await (await fetch(`${apiRoot}/user/${id}`)).json())
+            }
+
+            setContacts(new_contacts);
+          }
+
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          
+        }
+      };
+
+      fetchContacts();
+
+      return () => clearInterval(interval);
+    }, []);
+
     // Fetching messages
-    // useEffect(() => {
-    //   const fetchMessages = async () => {
-    //     if (currentChat == null) return;
-    //     try {
-    //       const response = await fetch(apiRoot + '/message/get?' + new URLSearchParams({
-    //         from_id: props.User_id,
-    //         to_id: currentChat,
-    //         anon: false,
-    //         //timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
-    //       }).toString());
-    //       const data = await response.json();
-    //       if (response.status == 200) {
-    //         setMessages(data.messages);
-    //         // TODO: Anon conversations list
-    //       } else throw Error(`Code ${response.status}`)
-    //     } catch (error) {
-    //       console.error('Error fetching messages:', error);
-    //     }
-    //   };
+    useEffect(() => {
+      const fetchMessages = async () => {
+        if (currentChat == null) return;
+        try {
+          const response = await fetch(apiRoot + '/message/get?' + new URLSearchParams({
+            from_id: props.User_id,
+            to_id: currentChat,
+            anon: false,
+            //timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
+          }).toString());
+          const data = await response.json();
+          if (response.status == 200) {
+            setMessages(data.messages);
+            // TODO: Anon conversations list
+          } else throw Error(`Code ${response.status}`)
+        } catch (error) {
+          console.error('Error fetching messages:', error);
+        }
+      };
 
-    //   fetchMessages();
-    //   const interval = setInterval(fetchMessages, 1000);
+      fetchMessages();
+      const interval = setInterval(fetchMessages, 1000);
 
-    //   return () => clearInterval(interval);
-    // }, []);
+      return () => clearInterval(interval);
+    }, [currentChat]);
 
     let User_response = await fetch(`${apiRoot}/user/${props.User_id}`)
     User = await User_response.json()
 
     const newMessageElements = createMessageComponenets(messages, props.User_id, other_user, other_user_pfp)
-  
-    const contactElements = props.contacts.map((contact) => {
+
+    const contactElements = contacts.map((contact) => {
         return (
             <button
-                className="flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" onClick={() => {changeCurrentChat(contact.id); setMessages([])}}
+                className="flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" onClick={() => {changeCurrentChat(contact._id); setMessages([])}}
             >
                 <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" src={contact.pfp}></img>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
@@ -146,7 +153,7 @@ async function Messages(props) {
                 >
                   <div className="h-20 w-20 rounded-full border overflow-hidden">
                     <img
-                      src="/logo.png"
+                      src={User.pfp}
                       alt="Avatar"
                       className="h-full w-full"
                     />
@@ -160,7 +167,7 @@ async function Messages(props) {
                     {/* Number of active dms of the user */}
                     <span
                       className="flex items-center justify-center dark:bg-stone-800 bg-gray-300 h-4 w-4 rounded-full"
-                      >{props.contacts.length}</span
+                      >{contacts.length}</span
                     >
                   </div>
                   {/* User profiles */}

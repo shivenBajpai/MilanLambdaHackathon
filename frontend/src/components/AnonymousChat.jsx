@@ -2,68 +2,63 @@ import React, { useEffect, useState } from "react"
 import createMessageComponenets from "../util/util"
 import { apiRoot } from "../pages/Messages"
 
-export default async function AnonymousChat(props) {
+export default function AnonymousChat(props) {
     // As soon as meet a stranger button is clicked we send a post request to server
     // and add the thisUser's id to the meeting list, if it's already not there
 
     // Using the same layout for both disconnected and finding person modal, just change fucntion
     // parameters ("dc" for disconnected modal and leave if empty for normal one)
     
-    // const [otherUser, setOtherUser] = useState("")
-    // const [messages, setMessages] = useState([])
-    // const [dcStatus, setDcStatus] = useState(false)
-
-    const otheUser = ""
-    const messages = []
-    const dcStatus = false
-
+    const [otherUser, setOtherUser] = useState(null)
+    const [messages, setMessages] = useState([])
+    const [dcStatus, setDcStatus] = useState(false)
 
     let revealed = false;
     
-    // // Fetching messages
-    // useEffect(() => {
-    //     const fetchMessages = async () => {
-    //       try {
-    //         const response = await fetch(apiRoot + '/message/get?',  + new URLSearchParams({
-    //             from_id: props.User_id,
-    //             to_id: otherUser_id,
-    //             anon: true,
-    //             //timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
-    //           }).toString());
-    //         const data = await response.json();
-    //         if (response.status == 200) setMessages(data);
-    //       } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //       }
-    //     };
+    // Fetching messages
+    useEffect(() => {
+        const fetchMessages = async () => {
+          try {
+            const response = await fetch(apiRoot + '/message/get?'  + new URLSearchParams({
+                from_id: props.thisUser,
+                to_id: otherUser,
+                anon: true,
+                //timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
+              }).toString());
+            const data = await response.json();
+            if (response.status == 200) setMessages(data);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
     
-    //     fetchMessages();
-    //     const interval = setInterval(fetchMessages, 1000);
+        fetchMessages();
+        const interval = setInterval(fetchMessages, 1000);
     
-    //     return () => clearInterval(interval);
-    // }, []);
+        return () => clearInterval(interval);
+    }, []);
 
-    // useEffect(() => {
-    //     let matched = false
-    //     const matchMake = async () => {
-    //         try {
+    useEffect(() => {
+        let matched = false
+        const matchMake = async () => {
+            try {
 
-    //             const response = await fetch(apiRoot + '/matchmake');
-    //             const id = await response.json().userid;
-    //             if (response.status == 200) {
-    //                 let response = await fetch(`${apiRoot}/user/${id}`)
-    //                 const otherUser = await response.json()
-    //             }
-    //             else throw err(`Code: ${response.status}`)
-    //         } catch (error) {
+                const response = await fetch(apiRoot + '/matchmake');
+                const id = await response.json().userid;
+                if (response.status == 200) {
+                    let response = await fetch(`${apiRoot}/user/${id}`)
+                    const otherUser = await response.json()
+                }
+                else throw err(`Code: ${response.status}`)
+            } catch (error) {
 
-    //             console.error('Error trying to match make:', error);
-    //         }
-    //     }
+                console.error('Error trying to match make:', error);
+            }
+        }
         
-    //     matchMake();
-    //     if (!matched) return () => clearInterval(setInterval(matchMake, 1000));
-    // }, []);
+        matchMake();
+        if (!matched) return () => clearInterval(setInterval(matchMake, 1000));
+    }, []);
 
     async function sendMessage() {
         let input = document.getElementById("input_field")
@@ -72,19 +67,19 @@ export default async function AnonymousChat(props) {
         if (input_val != "") fetch(apiRoot + '/message/create', {
             method:"POST",
             body: JSON.stringify({
-            from_id: User_id, // TODO: Need logged in users info
-            to_id: otherUser_id,
+            from_id: thisUser, // TODO: Need logged in users info
+            to_id: otherUser,
             message: input_val,
             timestamp: Date.now(),
             anon: true
         })
     })}
 
-    function proposeReveal() {
+    async function proposeReveal() {
         
     }
 
-    function disconnect() {
+    async function disconnect() {
         setDcStatus(false);
     }
 
@@ -94,9 +89,8 @@ export default async function AnonymousChat(props) {
     }};
 
     function anonModal(state) {
-        return (
-            <div className="mb-4 text-center font-bold text-indigo-700 flex flex-col">
-            {state == "dc" ? <h1 className="text-indigo-400">The other person disconnected, you may close the window.</h1> : <><h1>Finding someone for you to talk to</h1><p className="font-normal text-black mb-4">Please be patient ^_^</p></>}
+        return <div className="mb-4 text-center font-bold text-indigo-700 flex flex-col">
+            {state == "dc" ? <h1 className="text-indigo-400">The other person disconnected, you may close the window.</h1> : <div><h1>Finding someone for you to talk to</h1><p className="font-normal text-black mb-4">Please be patient ^_^</p></div>}
             <div className="flex justify-center"role="status">
                 <svg aria-hidden="true" class="w-8 h-8 text-gray-100 animate-spin dark:text-gray-200 fill-indigo-800" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -105,7 +99,6 @@ export default async function AnonymousChat(props) {
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
-        )
     }
 
     const thisUser = props.thisUser
@@ -128,7 +121,7 @@ export default async function AnonymousChat(props) {
                                     <button onClick={async () => {props.close();await disconnect()}} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
                                 </div>
                             </div>
-                            {false ? (
+                            {otherUser ? (
                                 <div>
                                     <div className="px-6 pb-4">
                                         <div className="flex flex-col-reverse space-y-1 mt-4 -mx-2 h-96 overflow-y-auto scrollbar-indigo">
