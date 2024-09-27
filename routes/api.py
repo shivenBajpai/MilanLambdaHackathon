@@ -161,21 +161,34 @@ def delete_anon(anon_id: str):
 
 queue = []
 
+to_be_informed = {}
+
 @api.route('/matchmake', methods=['POST'])
 @require_auth
 def matchmake(): 
     user1 = request.cookies.get('userid')
 
+    if user1 in to_be_informed:
+        anon_id = to_be_informed[user1]
+        del to_be_informed[user_id]
+        convo = anon.get_anon(anon_id)
+        convo['_id'] = str(convo['_id'])
+        return convo
+        
+
     if not queue:
         queue.append(user1)
-        return "OK"
+        return "Waiting", 404
 
-    if queue:
-        user2 = queue[0]
-        queue = queue[1:]
+    user2 = queue[0]
+    queue = queue[1:]
 
-    anon.create_anon({
+    anon_id = anon.create_anon({
         "from_id": user1,
         "to_id": user2,
         "messages": []
     })
+
+    convo = anon.get_anon(anon_id)
+    convo['_id'] = str(convo['_id'])
+    return convo
