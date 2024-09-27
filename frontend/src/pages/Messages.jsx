@@ -100,9 +100,11 @@ async function Messages(props) {
     }
 
     const contactElements = contacts.map((contact) => {
+      console.log(currentChat, contact._id)
+      const style = currentChat==contact._id ? " dark:bg-zinc-700 bg-gray-100" : ""
         return (
             <button
-                className="flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" onClick={() => {changeCurrentChat(contact._id)}}
+                className={"flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" + style} onClick={() => {changeCurrentChat(contact._id)}}
             >
                 <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" crossOrigin="anonymous" src={contact.pfp}></img>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
