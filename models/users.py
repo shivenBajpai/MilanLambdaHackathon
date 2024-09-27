@@ -12,6 +12,18 @@ client = MongoClient(uri, server_api=ServerApi('1'))
 db = client.Main_DB
 users = db.users
 
+#EXCEPTIONS
+
+class NotFoundError(Exception):
+    pass
+
+class WriteError(Exception):
+    pass
+
+class DuplicateKeyError(Exception):
+    pass
+
+
 #SEND A PING TO CONFIRM CONECTION
 
 try:
@@ -91,11 +103,13 @@ def add_user(userDetails:dict):
     except Exception as e:
         if e.__class__.__name__ == "DuplicateKeyError":
             exception = f"User with either Username: {userDetails["username"]} or Email: {userDetails["email"]} already exists in the users collection."
+            raise DuplicateKeyError(exception)
         elif e.__class__.__name__ == "WriteError":
             exception = "Check userSchema. Input values are not according to it"
+            raise WriteError(exception)
         else:
             exception = e
-        raise Exception(exception)
+            raise Exception(exception)
     
     return str(inserted_record.inserted_id)
 
@@ -109,7 +123,7 @@ def get_user(id:str):
 
     if(not user):
         exception = f"Couldn't find any user with id: {id}"
-        raise Exception(exception)
+        raise NotFoundError(exception)
     
     return user
 
@@ -123,7 +137,7 @@ def update_user(id:str, field:str, new_value:str):
 
     if(not user):
         exception = f"Couldn't find any user with id: {id}"
-        raise Exception(exception)
+        raise NotFoundError(exception)
 
     users.update_one({
         "_id" : ObjectId(id)
@@ -146,7 +160,7 @@ def delete_user(id:str):
 
     if(not user):
         exception = f"Couldn't find any user with id: {id}"
-        raise Exception(exception)
+        raise NotFoundError(exception)
 
     users.delete_one({
         "_id": ObjectId(id)
@@ -166,7 +180,7 @@ def get_user_by_email(email:str):
 
     if(not user):
         exception = f"Couldn't find any user with email: {email}"
-        raise Exception(exception)
+        raise NotFoundError(exception)
     
     return user
 
@@ -180,7 +194,7 @@ def get_contacts(id:str):
 
     if(not user):
         exception = f"Couldn't find any user with id: {id}"
-        raise Exception(exception)
+        raise NotFoundError(exception)
     
     contact_list = user["contacts"]
     contact_list = [str(x) for x in list(contact_list)]

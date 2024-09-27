@@ -145,8 +145,25 @@ def add_message(messageDetails:dict, anon=None):
 #READ MESSAGES BETWEEN 2 USERS SORTED BY TIMESTAMP => TAKES FROM AND TO ID'S AND OPTIONAL ARGS ARE ANON AND TIMESTAMP => RETURN LIST OF MESSAGE OBJECT DICTIONARIES
 #IF ANON PARAM IS GIVEN AS ANON CONVO ID, GIVES MESSAGES FROM ANON CONVO ONLY
 #IF TIMESTAMP IS GIVEN, SENDS MESSAGES AFTER PARTICULAR TIMESTAMP ONLY [GREATER THAN OR EQUAL TO]
+#ADDS USER1 TO USER2'S CONTACT LIST AND VICE VERSA IF CONTACT DOESN'T EXIST ALREADY
 
 def get_message(from_id:str, to_id:str, anon=None, timestamp=None):
+
+    user1 = users.find_one({
+        "_id": ObjectId(from_id)
+    })
+
+    user2 = users.find_one({
+        "_id": ObjectId(to_id)
+    })
+
+    if((not user1) or (not user2)):
+        exception = "Either one or both users not found in users collection"
+        raise NotFoundError(exception)
+    
+    if(user1 == user2):
+        exception = "Both User ids are same"
+        raise Exception(exception)
 
     if(not anon):
         anon = None
@@ -159,6 +176,25 @@ def get_message(from_id:str, to_id:str, anon=None, timestamp=None):
             exception = f"Anonymous conversation with id:{anon} not found."
             raise NotFoundError(exception)
         
+    if(not anon):
+        users.update_one({
+            "_id": ObjectId(from_id)
+        },
+        {
+            "$addToSet": {
+                "contacts": ObjectId(to_id)
+            }
+        })
+
+        users.update_one({
+            "_id": ObjectId(to_id)
+        },
+        {
+            "$addToSet": {
+                "contacts": ObjectId(from_id)
+            }
+        })
+
     query = {
         "from_id": ObjectId(from_id),
         "to_id": ObjectId(to_id),
