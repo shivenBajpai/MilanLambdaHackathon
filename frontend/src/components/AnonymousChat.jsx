@@ -50,7 +50,7 @@ export default function AnonymousChat(props) {
                     let response = await fetch(`${apiRoot}/user/${id}`)
                     const otherUser = await response.json()
                 }
-                else throw err(`Code: ${response.status}`)
+                else if (response.status != 420) throw Error(`Code: ${response.status}`)
             } catch (error) {
 
                 console.error('Error trying to match make:', error);
