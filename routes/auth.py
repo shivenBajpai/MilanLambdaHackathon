@@ -69,10 +69,8 @@ def authorize():
         print(e)
         id = users.add_user({
             "username": userdata['name'],
-            "gender": 'Other',
             "email": userdata['email'],
             "pfp": userdata['picture'],
-            "OAuth": token["access_token"], 
         })
 
     oauth.logged_in[id] = token['access_token']

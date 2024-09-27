@@ -1,6 +1,7 @@
 from flask import Flask,Blueprint,render_template,request, g
 from routes.auth import oauth
 from models import messages, users, anon
+from datetime import datetime
 
 from functools import wraps
 
@@ -70,7 +71,7 @@ def delete_user(user_id: str):
 
 # CRUD Methods for message
 
-@api.route('/message/create', methods=['POSTT'])
+@api.route('/message/create', methods=['POST'])
 @require_auth
 def create_message():
     if request.data.get('from_id') != request.cookies.get('userid'):
@@ -84,15 +85,15 @@ def create_message():
 @api.route('/message/get', methods=['GET'])
 @require_auth
 def get_message():
-    if request.data.get('from_id') != request.cookies.get('userid') \
-        and requests.data.get('to_id') != request.cookies.get('userid'):
+    if request.args.get('from_id') != request.cookies.get('userid') \
+        and requests.args.get('to_id') != request.cookies.get('userid'):
         return {"err": "Unauthorized"}, 401
     
     try:
-        from_id = request.data['from_id']
-        to_id = request.data['to_id']
-        anon = request.data.get('anon', None)
-        timestamp = request.data.get('timestamp', None) 
+        from_id = request.args['from_id']
+        to_id = request.args['to_id']
+        anon = request.args.get('anon', None)
+        timestamp = datetime.from_timestamp(int(request.args.get('timestamp', None)))
         msg = users.get_message(from_id, to_id, anon, timestamp)
         msg['_id'] = str(msg['_id'])
         return msg
@@ -130,7 +131,7 @@ def get_anon(anon_id: str):
     try:
         convo = anon.get_anon(anon_id)
         convo['_id'] = str(convo['_id'])
-       return convo
+        return convo
     except Exception as e:
         return {"err": str(e)}, 500
 
@@ -160,7 +161,7 @@ def delete_anon(anon_id: str):
 
 queue = []
 
-@api.route('/matchmake', methods='POST')
+@api.route('/matchmake', methods=['POST'])
 @require_auth
 def matchmake(): 
     user1 = request.cookies.get('userid')
