@@ -23,10 +23,11 @@ export default function AnonymousChat(props) {
                 from_id: props.thisUser,
                 to_id: otherUser,
                 //TODO: anon: true,
-                //timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
+                timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
               }).toString());
             const data = await response.json();
-            if (response.status == 200) setMessages(data);
+            if (response.status == 200) 
+                if (data.message_list.length > 0) setMessages(data);
           } catch (error) {
             console.error('Error fetching data:', error);
           }

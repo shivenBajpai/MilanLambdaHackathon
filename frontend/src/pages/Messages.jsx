@@ -95,11 +95,11 @@ async function Messages(props) {
             from_id: props.User_id,
             to_id: currentChat,
             // anon: false,
-            //timestamp: messages.lengtIPHACh>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
+            timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
           }).toString());
           const data = await response.json();
           if (response.status == 200) {
-            setMessages(data.messages);
+            if (data.message_list.length > 0) setMessages(data.message_list);
             // TODO: Anon conversations list
           } else throw Error(`Code ${response.status}`)
         } catch (error) {
