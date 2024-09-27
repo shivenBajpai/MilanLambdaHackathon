@@ -132,7 +132,7 @@ async function Messages(props) {
 
     // TODO: Pass other users ID as a prop
     return <div className="flex h-screen antialiased text-gray-900">
-            {AnonymousChatOpen && <AnonymousChat thisUser={props.User_id} close={toggleAnonymousChatOpen} otherUser={""}></AnonymousChat>}
+            {AnonymousChatOpen && <AnonymousChat thisUser={props.User_id} close={toggleAnonymousChatOpen}></AnonymousChat>}
             <div className="flex flex-row h-full w-full overflow-x-hidden">
               <div className="dark:bg-stone-800 dark:text-zinc-50 flex flex-col py-8 pl-6 pr-2 w-64 bg-transparent flex-shrink-0">
                 <div className="flex flex-row items-center justify-center h-12 w-full">
