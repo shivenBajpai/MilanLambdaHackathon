@@ -1,25 +1,37 @@
 import AnonymousChat from "../components/AnonymousChat"
 import React, { useEffect, useState } from "react"
 import createMessageComponenets from "../util/util"
+import { Navigate } from "react-router-dom"
 
-export const apiRoot = "https://66f59c6c436827ced974918d.mockapi.io/api"
+export const apiRoot = "/api"
 
-export default async function Messages() {
-    //const User = "Me"
-    // TODO: Might have to add 'credentials: include' to the requests
-    const User_id = 100;
-    let User = null;
+export default async function MessageWrapper() {
+    const User_id = document.cookie.split('; ').filter(row => row.startsWith('userid=')).map(c=>c.split('=')[1])[0]
+    
+    if (User_id == undefined) return <Navigate to="/login" />
+    
+    const messageElement = await Messages({User_id}).catch((err) => console.log(err));
+    return <div>{messageElement}</div>
+}
 
-    let User_response = await fetch(`${apiRoot}/user/${User_id}`)
-    if (User_response.status == 200) {
-      User = await User_response.json()
-    }
+async function Messages(props) {
 
     const [currentChat, changeCurrentChat] = React.useState(null)
     const [AnonymousChatOpen, toggleAnonymousChatOpen] = React.useState(false)
+    // Should be given as json ordeindigo according to timestamp
+    const [messages, setMessages] = useState([])
+    const [contacts, setContacts] = useState([])
 
     let other_user = null
     let other_user_pfp = null
+
+    let User = {
+      contacts: []
+    };
+    // let User = {
+    //   username: "Tom",
+    //   email: "Jery"
+    // }
 
     function newRandomChat() {
       toggleAnonymousChatOpen(true)
@@ -32,7 +44,7 @@ export default async function Messages() {
       if (input_val != "") fetch(apiRoot + '/message/create', {
         method:"POST",
         body: JSON.stringify({
-          from_id: User_id, // TODO: Need logged in users info
+          from_id: props.User_id, // TODO: Need logged in users info
           to_id: currentChat,
           message: input_val,
           timestamp: Date.now(),
@@ -47,21 +59,19 @@ export default async function Messages() {
       }
     };
 
-    // Should be given as json ordeindigo according to timestamp
-    const [contacts, setContacts] = useState([])
-    const [messages, setMessages] = useState([])
-
     // Fetching Contacts
     useEffect(() => {
       const fetchContacts = async () => {
         try {
-          const response = await fetch(apiRoot + '/contacts', {
-            
-          });
-          const data = await response.json();
-          if (response.status == 200) setContacts(data);
+          let response = await fetch(`${apiRoot}/user/${props.User_id}`)
+          if (response.status == 200) {
+            let new_contacts = (await response.json()).contacts;
+            if (User.contacts.length != new_contacts.length) setContacts(new_contacts);
+          }
+
         } catch (error) {
           console.error('Error fetching data:', error);
+          
         }
       };
 
@@ -76,16 +86,19 @@ export default async function Messages() {
       const fetchMessages = async () => {
         if (currentChat == null) return;
         try {
-          const response = await fetch(apiRoot + '/message', {
-            from_id: User_id,
+          const response = await fetch(apiRoot + '/message/get?' + new URLSearchParams({
+            from_id: props.User_id,
             to_id: currentChat,
             anon: false,
-            //timestamp: messages.length>0?null:messages[messages.length-1].timestamp TODO: Optimize to use after condition, adjust to have from_id and to_id
-          });
+            //timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
+          }).toString());
           const data = await response.json();
-          if (response.status == 200) setMessages(data);
+          if (response.status == 200) {
+            setMessages(data.messages);
+            // TODO: Anon conversations list
+          } else throw Error(`Code ${response.status}`)
         } catch (error) {
-          console.error('Error fetching data:', error);
+          console.error('Error fetching messages:', error);
         }
       };
 
@@ -95,7 +108,10 @@ export default async function Messages() {
       return () => clearInterval(interval);
     }, []);
 
-    const newMessageElements = createMessageComponenets(messages, User_id, other_user, other_user_pfp)
+    let User_response = await fetch(`${apiRoot}/user/${props.User_id}`)
+    User = await User_response.json()
+
+    const newMessageElements = createMessageComponenets(messages, props.User_id, other_user, other_user_pfp)
 
     const contactElements = contacts.map((contact) => {
         return (
@@ -113,10 +129,10 @@ export default async function Messages() {
             </button>
         )
     })
+
     // TODO: Pass other users ID as a prop
-    return (
-        <div className="flex h-screen antialiased text-gray-900">
-            {AnonymousChatOpen && <AnonymousChat thisUser={User_id} close={toggleAnonymousChatOpen} otherUser={""}></AnonymousChat>}
+    return <div className="flex h-screen antialiased text-gray-900">
+            {AnonymousChatOpen && <AnonymousChat thisUser={props.User_id} close={toggleAnonymousChatOpen} otherUser={""}></AnonymousChat>}
             <div className="flex flex-row h-full w-full overflow-x-hidden">
               <div className="dark:bg-stone-800 dark:text-zinc-50 flex flex-col py-8 pl-6 pr-2 w-64 bg-transparent flex-shrink-0">
                 <div className="flex flex-row items-center justify-center h-12 w-full">
@@ -132,13 +148,13 @@ export default async function Messages() {
                 >
                   <div className="h-20 w-20 rounded-full border overflow-hidden">
                     <img
-                      src="/profile.png"
+                      src="/logo.png"
                       alt="Avatar"
                       className="h-full w-full"
                     />
                   </div>
-                  <div className="text-sm font-semibold mt-2">Username</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-300">Email</div>
+                  <div className="text-sm font-semibold mt-2">{User.username}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-300">{User.email}</div>
                 </div>
                 <div className="flex flex-grow flex-col mt-8">
                   <div className="flex flex-row items-center justify-between text-xs">
@@ -229,8 +245,5 @@ export default async function Messages() {
                 </div>
               </div>
             </div>
-
           </div>
-    )
-
 }
