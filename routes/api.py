@@ -1,6 +1,6 @@
 from flask import Flask,Blueprint,render_template,request, g
 from routes.auth import oauth
-from models import messages, users
+from models import messages, users, anon
 
 from functools import wraps
 
@@ -26,12 +26,6 @@ def require_auth(f):
 @api.route('/user/create', methods=['POST'])
 @require_auth
 def create_user():
-    userid = request.cookies.get('userid', None)
-    token = request.cookies.get('token', None)
-
-    if (userid is None or token is None):
-        return {"err": "Unauthorized"}, 401
-
     try:
         return users.add_user(request.data)
     except Exception as e:
@@ -121,3 +115,66 @@ def delete_message(msg_id: str):
     except Exception as e:
         return {"err": str(e)}, 500
 
+
+@api.route('/anon/create', methods=['POST'])
+@require_auth
+def create_anon():
+    try:
+       return anon.add_anon(request.data)
+    except Exception as e:
+        return {"err": str(e)}, 500
+
+@api.route('/anon/<anon_id>', methods=['GET'])
+@require_auth
+def get_anon(anon_id: str): 
+    try:
+        convo = anon.get_anon(anon_id)
+        convo['_id'] = str(convo['_id'])
+       return convo
+    except Exception as e:
+        return {"err": str(e)}, 500
+
+@api.route('/anon/<anon_id>/<message_id>', methods=['PUT'])
+@require_auth
+def anon_add_message(anon_id: str, message_id: str): 
+    try:
+        userid = request.cookies.get('userid')
+        convo = anon.get_anon(anon_id)
+        if userid != str(convo['from_id']) or userid != str(convo['to_id']):
+            return {"err": "Unauthorized"}, 401
+        return anon.update_anon(anon_id, message_id)
+    except Exception as e:
+        return {"err": str(e)}, 500
+
+@api.route('/user/<user_id>', methods=['DELETE'])
+@require_auth
+def delete_anon(anon_id: str):
+    try:
+        userid = request.cookies.get('userid')
+        convo = anon.get_anon(anon_id)
+        if userid != str(convo['from_id']) or userid != str(convo['to_id']):
+            return {"err": "Unauthorized"}, 401
+        return anon.delete_anon(anon_id)
+    except Exception as e:
+        return {"err": str(e)}, 500
+
+queue = []
+
+@api.route('/matchmake', methods='POST')
+@require_auth
+def matchmake(): 
+    user1 = request.cookies.get('userid')
+
+    if not queue:
+        queue.append(user1)
+        return "OK"
+
+    if queue:
+        user2 = queue[0]
+        queue = queue[1:]
+
+    anon.create_anon({
+        "from_id": user1,
+        "to_id": user2,
+        "messages": []
+    })

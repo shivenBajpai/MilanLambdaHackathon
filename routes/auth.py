@@ -75,6 +75,8 @@ def authorize():
             "OAuth": token["access_token"], 
         })
 
+    oauth.logged_in[id] = token['access_token']
+
     print(token)
     resp = redirect('/messages')
     resp.set_cookie('userid', id)
