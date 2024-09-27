@@ -87,7 +87,6 @@ def create_message():
 @api.route('/message/get', methods=['GET'])
 @require_auth
 def get_message():
- 
     try:
         from_id = request.args['from_id']
         to_id = request.args['to_id']

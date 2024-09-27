@@ -30,7 +30,7 @@ export default function createMessageComponenets(messages, thisUser, other_user,
             <div id={"dropdownDots-" + id} class="z-10 hidden bg-transparent divide-y divide-gray-100 rounded-lg shadow w-40 dark:divide-gray-600">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconButton">
                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
+                        <a onClick={() => deleteMessage(id)} class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
                     </li>
                 </ul>
             </div>
@@ -57,7 +57,7 @@ export default function createMessageComponenets(messages, thisUser, other_user,
                                 )}
                             </div>
                         </div>
-                        {crudButton(i)}
+                        {crudButton(messages[i].id)}
                     </div>
                 </div>
             )
@@ -70,6 +70,7 @@ export default function createMessageComponenets(messages, thisUser, other_user,
             const topUser = (i != (messages.length-1) && ((messages[i].from_id == messages[i+1].from_id) &&  i != 0 && messages[i].from_id != messages[i-1].from_id) || ( i != 0 && messages[i-1].from_id == thisUser))
             messageElements.push(
                 <div className={"col-start-1 col-end-8 rounded-lg" + spacing + margin}>
+                    {crudButton(messages[i].id)}
                     <div className="flex flex-col">
                         {topUser && <div className="font-bold ml-14 dark:text-indigo-400 text-indigo-500">{other_user + ":"}</div>}
                         <div className="flex flex-row items-center">
