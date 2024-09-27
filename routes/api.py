@@ -179,7 +179,10 @@ def matchmake():
 
     if not queue:
         queue.append(user1)
-        return "Waiting", 404
+        return {"err": "Waiting"}, 420
+
+    if queue[0] == user1:
+        return {"err": "Waiting"}, 420
 
     user2 = queue[0]
     queue = queue[1:]
