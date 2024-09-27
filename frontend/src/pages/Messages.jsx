@@ -43,6 +43,7 @@ async function Messages(props) {
       input.value = ""
       if (input_val != "") fetch(apiRoot + '/message/create', {
         method:"POST",
+        headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({
           from_id: props.User_id, // TODO: Need logged in users info
           to_id: currentChat,
