@@ -16,8 +16,7 @@ export default async function AnonymousChat(props) {
     function anonModal(state) {
         return (
             <div className="mb-4 text-center font-bold text-indigo-700 flex flex-col">
-            {state == "dc" ? <h1 className="text-indigo-400">Previous person disconnected, Finding someone else for you to talk to</h1> : <h1>Finding someone for you to talk to</h1>}
-            <p className="font-normal text-black mb-4">Please be patient ^_^</p>
+            {state == "dc" ? <h1 className="text-indigo-400">The other person disconnected, you may close the window.</h1> : <><h1>Finding someone for you to talk to</h1><p className="font-normal text-black mb-4">Please be patient ^_^</p></>}
             <div className="flex justify-center"role="status">
                 <svg aria-hidden="true" class="w-8 h-8 text-gray-100 animate-spin dark:text-gray-200 fill-indigo-800" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -31,17 +30,18 @@ export default async function AnonymousChat(props) {
     let revealed = false;
 
     const [messages, setMessages] = useState([])
+    const [dcStatus, setDcStatus] = useState(false)
 
     // Fetching messages
     useEffect(() => {
         const fetchMessages = async () => {
           try {
-            const response = await fetch(apiRoot + '/message', {
-              from_id: User_id,
-              to_id: otherUser_id,
-              anon: true,
-                //timestamp: messages.length>0?null:messages[messages.length-1].timestamp TODO: Optimize to use after condition, adjust to have from_id and to_id
-            });
+            const response = await fetch(apiRoot + '/message/get?',  + new URLSearchParams({
+                from_id: props.User_id,
+                to_id: otherUser_id,
+                anon: true,
+                //timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
+              }).toString());
             const data = await response.json();
             if (response.status == 200) setMessages(data);
           } catch (error) {
@@ -56,19 +56,26 @@ export default async function AnonymousChat(props) {
     }, []);
 
     async function sendMessage() {
-    let input = document.getElementById("input_field")
-    let input_val = input.value
-    input.value = ""
-    if (input_val != "") fetch(apiRoot + '/message/create', {
-        method:"POST",
-        body: JSON.stringify({
-        from_id: User_id, // TODO: Need logged in users info
-        to_id: otherUser_id,
-        message: input_val,
-        timestamp: Date.now(),
-        anon: true
+        let input = document.getElementById("input_field")
+        let input_val = input.value
+        input.value = ""
+        if (input_val != "") fetch(apiRoot + '/message/create', {
+            method:"POST",
+            body: JSON.stringify({
+            from_id: User_id, // TODO: Need logged in users info
+            to_id: otherUser_id,
+            message: input_val,
+            timestamp: Date.now(),
+            anon: true
         })
-    })
+    })}
+
+    async function proposeReveal() {
+        
+    }
+
+    async function disconnect() {
+        setDcStatus(false);
     }
 
     function handleKeyDown(e) {
@@ -192,8 +199,8 @@ export default async function AnonymousChat(props) {
                                 <div className="mr-16"></div>
                                 <div className="font-bold">{revealed?otherUser:"Anonymous"}</div>
                                 <div>
-                                    <button type="button" className="dark:bg-stone-800 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
-                                    <button onClick={() => props.close()} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
+                                    <button onClick={proposeReveal} type="button" className="dark:bg-stone-800 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
+                                    <button onClick={async () => {props.close();await disconnect()}} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
                                 </div>
                             </div>
                             {otherUser ? (
@@ -260,7 +267,7 @@ export default async function AnonymousChat(props) {
                                         </div>
                                     </div>
                                 </div>
-                            ) : (anonModal())}
+                            ) : (anonModal(dcStatus))}
                         </div>
                     </div>
                 </div>
