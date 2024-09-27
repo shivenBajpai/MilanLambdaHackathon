@@ -65,8 +65,14 @@ async function Messages(props) {
         try {
           let response = await fetch(`${apiRoot}/user/${props.User_id}`)
           if (response.status == 200) {
-            let new_contacts = (await response.json()).contacts;
-            if (User.contacts.length != new_contacts.length) setContacts(new_contacts);
+            let new_contacts_ids = (await response.json()).contacts;
+            let new_contacts = [];
+            
+            for (const id of new_contacts_ids) {
+              new_contacts.push(await (await fetch(`${apiRoot}/user/${id}`)).json())
+            }
+
+            setContacts(new_contacts);
           }
 
         } catch (error) {
@@ -76,7 +82,6 @@ async function Messages(props) {
       };
 
       fetchContacts();
-      const interval = setInterval(fetchContacts, 5000);
 
       return () => clearInterval(interval);
     }, []);
@@ -106,7 +111,7 @@ async function Messages(props) {
       const interval = setInterval(fetchMessages, 1000);
 
       return () => clearInterval(interval);
-    }, []);
+    }, [currentChat]);
 
     let User_response = await fetch(`${apiRoot}/user/${props.User_id}`)
     User = await User_response.json()
@@ -116,7 +121,7 @@ async function Messages(props) {
     const contactElements = contacts.map((contact) => {
         return (
             <button
-                className="flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" onClick={() => {changeCurrentChat(contact.id); setMessages([])}}
+                className="flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" onClick={() => {changeCurrentChat(contact._id); setMessages([])}}
             >
                 <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" src={contact.pfp}></img>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
@@ -148,7 +153,7 @@ async function Messages(props) {
                 >
                   <div className="h-20 w-20 rounded-full border overflow-hidden">
                     <img
-                      src="/logo.png"
+                      src={User.pfp}
                       alt="Avatar"
                       className="h-full w-full"
                     />
