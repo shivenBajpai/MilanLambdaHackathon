@@ -19,7 +19,7 @@ export default function AnonymousChat(props) {
     // Fetching messages
     useEffect(() => {
         const fetchMessages = async () => {
-          console.log(otherUser)
+        //   console.log(otherUser)
           if (otherUser != null) {
             try {
                 const response = await fetch(apiRoot + '/message/get?'  + new URLSearchParams({
@@ -117,7 +117,7 @@ export default function AnonymousChat(props) {
     const messageElements = createMessageComponenets(messages, thisUser, revealed?otherUser.username:"Anonymous", '/profile.png')
 
     return (
-        <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div className="relative z-20" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             {/* For making background blur */}
             <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
             {/* Buttons */}
