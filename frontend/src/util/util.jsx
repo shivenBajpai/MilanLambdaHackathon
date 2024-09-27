@@ -5,10 +5,6 @@ export default function createMessageComponenets(messages, thisUser, other_user,
         timeStyle: "short"
     })
 
-    // const DtFormat = {
-    //     format(string) {return ""}
-    // }
-
     for (let i = 0; i<messages.length; i++) {
         let spacing = " mt-2"
         if (i != 0 && (messages[i-1].author == messages[i].author)) {
@@ -21,7 +17,7 @@ export default function createMessageComponenets(messages, thisUser, other_user,
                 <div className={"col-start-6 col-end-13 rounded-lg" + spacing}>
                     <div className="flex items-center justify-start flex-row-reverse">
                         <div
-                            className="relative mr-3 text-md bg-red-300 py-2 px-4 shadow rounded-xl"
+                            className="dark:text-white dark:bg-indigo-600 relative mr-3 text-md bg-indigo-400 py-2 px-4 shadow rounded-xl"
                         >
                             <div>{messages[i].text}
                                 {((timeNext != timeThis) || messages[i+1]?.author != thisUser) && (
@@ -43,11 +39,11 @@ export default function createMessageComponenets(messages, thisUser, other_user,
             messageElements.push(
                 <div className={"col-start-1 col-end-8 rounded-lg" + spacing + margin}>
                     <div className="flex flex-col">
-                        {topUser && <div className="font-bold ml-14 text-red-500">{other_user + ":"}</div>}
+                        {topUser && <div className="font-bold ml-14 text-indigo-500">{other_user + ":"}</div>}
                         <div className="flex flex-row items-center">
-                        {topUser && <img className="flex items-center justify-center h-10 w-10 rounded-full bg-red-500 flex-shrink-0" src={other_user_pfp}></img>}
+                        {topUser && <img className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0" src={other_user_pfp}></img>}
                         <div
-                            className="relative ml-3 text-md bg-white py-2 px-4 shadow rounded-xl"
+                            className="dark:bg-stone-700 dark:text-white relative ml-3 text-md bg-white py-2 px-4 shadow rounded-xl"
                         >
                             <div>{messages[i].text}
                                 {((timeNext != timeThis) || messages[i+1]?.author == thisUser) && (

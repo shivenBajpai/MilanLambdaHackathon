@@ -8,9 +8,9 @@ import './App.css'
 import TopNav from "./components/Topnav.jsx";
 
 function Layout() {
-  return <>
+  return <div>
     <Outlet />
-  </>
+  </div>
 }
 
 export default function App() {

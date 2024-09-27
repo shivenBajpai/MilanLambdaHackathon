@@ -38,7 +38,7 @@ export default function Messages() {
       }
     };
 
-    // Should be given as json ordered according to timestamp
+    // Should be given as json ordeindigo according to timestamp
     const [contacts, setContacts] = useState([])
     const [messages, setMessages] = useState([])
 
@@ -53,10 +53,10 @@ export default function Messages() {
           console.error('Error fetching data:', error);
         }
       };
-  
+
       fetchContacts();
       const interval = setInterval(fetchContacts, 5000);
-  
+
       return () => clearInterval(interval);
     }, []);
 
@@ -71,10 +71,10 @@ export default function Messages() {
           console.error('Error fetching data:', error);
         }
       };
-  
+
       fetchMessages();
       const interval = setInterval(fetchMessages, 1000);
-  
+
       return () => clearInterval(interval);
     }, []);
 
@@ -83,13 +83,13 @@ export default function Messages() {
     const contactElements = contacts.map((contact) => {
         return (
             <button
-                className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2" onClick={() => changeCurrentChat(contact.id)}
+                className="flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" onClick={() => changeCurrentChat(contact.id)}
             >
-                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-red-500 flex-shrink-0" src={contact.pfp}></img>
+                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" src={contact.pfp}></img>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
                 {/* Unread messages */}
                 {/* <div
-                className="flex items-center justify-center ml-auto text-xs text-white bg-red-500 h-4 w-4 rounded leading-none"
+                className="flex items-center justify-center ml-auto text-xs text-white bg-indigo-500 h-4 w-4 rounded leading-none"
                 >
                 2
                 </div> */}
@@ -101,17 +101,17 @@ export default function Messages() {
         <div className="flex h-screen antialiased text-gray-900">
             {AnonymousChatOpen && <AnonymousChat thisUser={User} close={toggleAnonymousChatOpen}></AnonymousChat>}
             <div className="flex flex-row h-full w-full overflow-x-hidden">
-              <div className="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
+              <div className="dark:bg-stone-800 dark:text-zinc-50 flex flex-col py-8 pl-6 pr-2 w-64 bg-transparent flex-shrink-0">
                 <div className="flex flex-row items-center justify-center h-12 w-full">
                   <div
-                    className="flex items-center justify-center rounded-2xl text-red-700 bg-transparent h-10 w-10"
+                    className="flex items-center justify-center rounded-2xl text-indigo-700 bg-transparent h-10 w-10"
                   >
                     <img src="/logo.png"></img>
                   </div>
                   <div className="ml-2 font-bold text-2xl">IPHAC</div>
                 </div>
                 <div
-                  className="flex flex-col items-center bg-gray-100 border border-gray-200 mt-4 w-full py-6 px-4 rounded-lg"
+                  className="flex flex-col items-center bg-transparent mt-4 w-full py-6 px-4 rounded-lg"
                 >
                   <div className="h-20 w-20 rounded-full border overflow-hidden">
                     <img
@@ -121,48 +121,48 @@ export default function Messages() {
                     />
                   </div>
                   <div className="text-sm font-semibold mt-2">Username</div>
-                  <div className="text-xs text-gray-500">Email</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-300">Email</div>
                 </div>
                 <div className="flex flex-grow flex-col mt-8">
                   <div className="flex flex-row items-center justify-between text-xs">
                     <span className="font-bold">Active DM's</span>
                     {/* Number of active dms of the user */}
                     <span
-                      className="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full"
+                      className="flex items-center justify-center dark:bg-stone-800 bg-gray-300 h-4 w-4 rounded-full"
                       >{contacts.length}</span
                     >
                   </div>
                   {/* User profiles */}
-                  <div className="flex flex-grow flex-col space-y-1 mt-4 -mx-2 h-64 overflow-y-auto scrollbar-red">
+                  <div className="flex flex-grow flex-col space-y-1 mt-4 -mx-2 h-64 overflow-y-auto scrollbar-indigo">
                     {contactElements}
                   </div>
                   {/* Button to chat with random person */}
-                  <button onClick={() => newRandomChat()} className="flex items-center justify-center bg-red-500 hover:bg-red-600 rounded-xl text-white px-4 py-4 font-bold flex-shrink-0 mt-4">
+                  <button onClick={() => newRandomChat()} className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-4 font-bold flex-shrink-0 mt-4">
                         <span>Meet a stranger</span>
                     </button>
                 </div>
               </div>
               <div className="flex flex-col flex-auto h-full p-6">
                 <div
-                  className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4"
+                  className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-200 dark:bg-stone-800 h-full p-4"
                 >
                 {/* Message box */}
                   <div className="flex flex-col h-full overflow-x-auto mb-4">
-                    <div className="flex flex-col-reverse overflow-y-auto h-full scrollbar-red">
+                    <div className="flex flex-col-reverse overflow-y-auto h-full scrollbar-indigo">
                       <div className="grid grid-cols-12">
                         {currentChat!=null && newMessageElements}
                       </div>
                     </div>
                   </div>
                   <div
-                    className="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4"
+                    className="dark:bg-stone-800 dark:text-white flex flex-row items-center h-16 rounded-xl bg-white w-full px-4"
                   >
                     <div className="flex-grow ml-4">
                       <div className="relative w-full">
                         <input
                           id="input_field"
                           type="text"
-                          className="flex w-full border rounded-xl focus:outline-none focus:border-red-300 pl-4 h-10"
+                          className="dark:bg-stone-800 dark:text-white flex w-full border dark:border-gray-600 rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
                           onKeyDown={handleKeyDown}
                         />
                         {/* THIS WAS THE EMOJI ICON <button
@@ -187,7 +187,7 @@ export default function Messages() {
                     </div>
                     <div className="ml-4">
                       <button
-                        className="flex items-center justify-center bg-red-500 hover:bg-red-600 rounded-xl text-white px-4 py-1 flex-shrink-0" onClick={sendMessage}
+                        className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0" onClick={sendMessage}
                       >
                         <span>Send</span>
                         <span className="ml-2">

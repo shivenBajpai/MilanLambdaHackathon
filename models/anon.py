@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 
 uri = "mongodb+srv://aritron1806:Am180906@cluster0.s15oq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&authSource=admin"
 
-#CREATE CONNECTION TO DB 
+#CREATE CONNECTION TO DB
 
 client = MongoClient(uri, server_api=ServerApi("1"))
 db = client.Main_DB
@@ -56,12 +56,12 @@ def create_anon():
 
     if(anon_convos != None):
         return "Already Exists"
-    
+
     try:
         db.create_collection("anon")
     except Exception as e:
         raise Exception(e)
-    
+
     db.command("collMod", "anon", validator=anon_Schema)
 
     return anon_Schema["$jsonSchema"]["properties"].keys()
@@ -81,7 +81,7 @@ def add_anon(anon_details:dict):
     if((not user1) or (not user2)):
         exception = "Either one or both users not found in users collection"
         raise Exception(exception)
-    
+
     if(user1 == user2):
         exception = "Both User ids are same"
         raise Exception(exception)
@@ -109,9 +109,9 @@ def get_anon(id:str):
 
     if(not anon_entry):
         raise Exception("Not found")
-    
+
     message_list = []
-    
+
     for i in list(anon_entry["messages"]):
         try:
             message_anon = messages.find({
@@ -134,7 +134,7 @@ def update_anon(convo_id:str,message_id:str):
     if(not message):
         exception = "Message ID not found"
         raise Exception(exception)
-    
+
     anon_entry = anon_convos.find_one({
         "_id": ObjectId(convo_id)
     })
@@ -142,7 +142,7 @@ def update_anon(convo_id:str,message_id:str):
     if(not anon_entry):
         exception = "Convo ID not found"
         raise Exception(exception)
-    
+
     anon_convos.update_one({
         "_id": ObjectId(convo_id)
     },
@@ -165,7 +165,7 @@ def delete_anon(id:str):
     if(not anon_entry):
         exception = "Convo ID not found"
         raise Exception(exception)
-    
+
     for i in list(anon_entry["messages"]):
         messages.delete_one({
             "_id": i
