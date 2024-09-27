@@ -69,7 +69,7 @@ async function Messages(props) {
             for (const id of new_contacts_ids) {
               new_contacts.push(await (await fetch(`${apiRoot}/user/${id}`)).json())
             }
-
+            
             setContacts(new_contacts);
           }
 

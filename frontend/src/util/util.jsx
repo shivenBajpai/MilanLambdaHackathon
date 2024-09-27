@@ -1,3 +1,5 @@
+import { apiRoot } from "../pages/Messages";
+
 export default function createMessageComponenets(messages, thisUser, other_user, other_user_pfp) {
     let messageElements = []
     const DtFormat = Intl.DateTimeFormat(undefined, {
@@ -5,11 +7,18 @@ export default function createMessageComponenets(messages, thisUser, other_user,
         timeStyle: "short"
     })
 
+    async function deleteMessage(messageID) {
+       fetch(apiRoot + '/message/' + messageID, {
+        method:"DELETE",
+        headers: new Headers({'content-type': 'application/json'})
+      })
+    }
+
     function toggleDropdown(id) {
         var dropdown = document.getElementById('dropdownDots-' + id);
         dropdown.classList.toggle('hidden');
     }
-
+    
     function crudButton (id) {
         return (
         <>
