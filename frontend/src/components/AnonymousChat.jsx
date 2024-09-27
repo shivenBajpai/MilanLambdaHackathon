@@ -12,7 +12,6 @@ export default function AnonymousChat(props) {
     const [otherUser, setOtherUser] = useState(null)
     const [anonId, setAnonId] = useState(null);
     const [messages, setMessages] = useState([])
-    const [dcStatus, setDcStatus] = useState(false)
 
     let revealed = false;
     
@@ -68,7 +67,7 @@ export default function AnonymousChat(props) {
         }
         
         matchMake();
-        
+        return () => matched = true
     }, []);
 
     async function sendMessage() {
@@ -79,7 +78,7 @@ export default function AnonymousChat(props) {
             method:"POST",
             headers: new Headers({'content-type': 'application/json'}),
             body: JSON.stringify({
-            from_id: thisUser, // TODO: Need logged in users info
+            from_id: thisUser,
             to_id: otherUser._id,
             message: input_val,
             timestamp: Date.now(),
@@ -89,10 +88,6 @@ export default function AnonymousChat(props) {
 
     async function proposeReveal() {
         
-    }
-
-    async function disconnect() {
-        setDcStatus(false);
     }
 
     function handleKeyDown(e) {
@@ -130,7 +125,7 @@ export default function AnonymousChat(props) {
                                 <div className="font-bold">{revealed?otherUser.username:"Anonymous"}</div>
                                 <div>
                                     <button onClick={proposeReveal} type="button" className="dark:bg-stone-800 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
-                                    <button onClick={async () => {props.close();await disconnect()}} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
+                                    <button onClick={props.close} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
                                 </div>
                             </div>
                             {otherUser ? (
@@ -197,7 +192,7 @@ export default function AnonymousChat(props) {
                                         </div>
                                     </div>
                                 </div>
-                            ) : (anonModal(dcStatus))}
+                            ) : (anonModal(false))}
                         </div>
                     </div>
                 </div>

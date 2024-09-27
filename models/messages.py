@@ -101,7 +101,7 @@ def add_message(messageDetails:dict):
         exception = "Both User ids are same"
         raise Exception(exception)
     
-    anon = messageDetails["anon"]
+    anon = messageDetails.get("anon", None)
     
     if(not anon):
         messageDetails["anon"] = None
