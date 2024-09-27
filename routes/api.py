@@ -64,7 +64,8 @@ def delete_user(user_id: str):
         return {"err": "Unauthorized"}, 401
 
     try:
-        return users.delete_user(user_id)
+        users.delete_user(user_id)
+        return {"ok": "ok"}
     except Exception as e:
         return {"err": str(e)}, 500
 
@@ -113,7 +114,8 @@ def update_message(msg_id: str):
 @require_auth
 def delete_message(msg_id: str):
     try:
-        return messages.delete_message(msg_id)
+        messages.delete_message(msg_id)
+        return {"ok": "ok"}
     except Exception as e:
         return {"err": str(e)}, 500
 
