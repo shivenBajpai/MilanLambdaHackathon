@@ -42,7 +42,7 @@ async function Messages(props) {
         method:"POST",
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({
-          from_id: props.User_id, // TODO: Need logged in users info
+          from_id: props.User_id,
           to_id: currentChat,
           message: input_val,
           timestamp: Date.now(),
@@ -117,7 +117,6 @@ async function Messages(props) {
         )
     })
 
-    // TODO: Pass other users ID as a prop
     return <div className="flex h-screen antialiased text-gray-900">
             {AnonymousChatOpen && <AnonymousChat thisUser={props.User_id} close={toggleAnonymousChatOpen}></AnonymousChat>}
             <div className="md:flex flex-row h-full w-full overflow-x-hidden">
