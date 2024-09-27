@@ -92,7 +92,6 @@ def add_user(userDetails:dict):
     try:
         inserted_record = users.insert_one(userDetails)
     except Exception as e:
-        raise e
         if e.__class__.__name__ == "DuplicateKeyError":
             exception = f"User with either Username: {userDetails['username']} or Email: {userDetails['email']} already exists in the users collection."
             raise DuplicateKeyError(exception)
@@ -116,6 +115,10 @@ def get_user(id:str):
     if(not user):
         exception = f"Couldn't find any user with id: {id}"
         raise NotFoundError(exception)
+    
+    user["_id"] = str(user["_id"])
+    
+    user["contacts"] = [str(x) for x in user["contacts"]]
 
     return user
 
@@ -143,6 +146,7 @@ def update_user(id:str, field:str, new_value:str):
     user = users.find_one({"_id":ObjectId(id)})
 
     user["contacts"] = [str(x) for x in user["contacts"]]
+    user["_id"] = str(user["_id"])
 
     return user
 
@@ -177,6 +181,9 @@ def get_user_by_email(email:str):
     if(not user):
         exception = f"Couldn't find any user with email: {email}"
         raise NotFoundError(exception)
+    
+    user["contacts"] = [str(x) for x in user["contacts"]]
+    user["_id"] = str(user["_id"])
 
     return user
 
@@ -200,6 +207,8 @@ def get_contacts(id:str):
         contacted_user = users.find_one({
             "_id": ObjectId(i)
         })
+        contacted_user["contacts"] = []
+        contacted_user["_id"] = str(contacted_user["_id"])
         return_object.append(contacted_user)
 
     return return_object
