@@ -214,6 +214,12 @@ def get_message(from_id:str, to_id:str, anon=None, timestamp=None):
 
     message_list = list(message_list_from) + list(message_list_to)
 
+    for index,i  in enumerate(message_list):
+        message_list[index]["from_id"] = str(i["from_id"])
+        message_list[index]["to_id"] = str(i["to_id"])
+        if(anon):
+            message_list[index]["anon"] = str(i["anon"])
+
     if(len(message_list) == 0):
         message_list_sorted = message_list
     else:
@@ -269,8 +275,14 @@ def update_message(id, new_message):
         }
     })
 
-    return messages.find_one({"_id": ObjectId(id)})
+    return_object = messages.find_one({"_id": ObjectId(id)})
+    return_object["from_id"] = str(return_object["from_id"])
+    return_object["to_id"] = str(return_object["to_id"])
+    if(not return_object["anon"]):
+        return_object["anon"] = str(return_object["anon"])
 
+    return return_object
+ 
 #DELETE MESSAGE BY ID => TAKES MESSAGE ID => RETURNS 1 IF REMOVED SUCCESSFULLY
 #ALSO REMOVES IT FROM ANON CONVO'S MESSAGE LIST IF DELETED
 
