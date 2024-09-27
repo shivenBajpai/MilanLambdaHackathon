@@ -18,19 +18,20 @@ export default function AnonymousChat(props) {
     // Fetching messages
     useEffect(() => {
         const fetchMessages = async () => {
-          try {
-            const response = await fetch(apiRoot + '/message/get?'  + new URLSearchParams({
-                from_id: props.thisUser,
-                to_id: otherUser,
-                //TODO: anon: true,
-                // timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
-              }).toString());
-            const data = await response.json();
-            if (response.status == 200) 
-                if (data.message_list.length > 0) setMessages(data);
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
+          if (otherUser != null) {
+            try {
+                const response = await fetch(apiRoot + '/message/get?'  + new URLSearchParams({
+                    from_id: props.thisUser,
+                    to_id: otherUser,
+                    //TODO: anon: true,
+                    // timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
+                }).toString());
+                const data = await response.json();
+                if (response.status == 200) 
+                    if (data.message_list.length > 0) setMessages(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+          }}
         };
     
         fetchMessages();
@@ -57,7 +58,9 @@ export default function AnonymousChat(props) {
         }
         
         matchMake();
-        if (!matched) return () => clearInterval(setInterval(matchMake, 1000));
+        const interval = setInterval(matchMake, 1000);
+
+        if (!matched) return () => clearInterval(interval);
     }, []);
 
     async function sendMessage() {
