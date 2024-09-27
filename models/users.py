@@ -93,7 +93,7 @@ def add_user(userDetails:dict):
         inserted_record = users.insert_one(userDetails)
     except Exception as e:
         if e.__class__.__name__ == "DuplicateKeyError":
-            exception = f"User with either Username: {userDetails["username"]} or Email: {userDetails["email"]} already exists in the users collection."
+            exception = f"User with either Username: {userDetails['username']} or Email: {userDetails['email']} already exists in the users collection."
             raise DuplicateKeyError(exception)
         elif e.__class__.__name__ == "WriteError":
             exception = "Check userSchema. Input values are not according to it"
@@ -115,6 +115,8 @@ def get_user(id:str):
     if(not user):
         exception = f"Couldn't find any user with id: {id}"
         raise NotFoundError(exception)
+    
+    user["contacts"] = [str(x) for x in user["contacts"]]
     
     return user
 
@@ -139,7 +141,11 @@ def update_user(id:str, field:str, new_value:str):
         }
     })
 
-    return users.find_one({"_id":ObjectId(id)})
+    user = users.find_one({"_id":ObjectId(id)})
+
+    user["contacts"] = [str(x) for x in user["contacts"]]
+
+    return user
 
 #DELETES DICTIONARY BY ID => RETURNS 1 IF SUCCESSFUL
 
@@ -172,6 +178,8 @@ def get_user_by_email(email:str):
     if(not user):
         exception = f"Couldn't find any user with email: {email}"
         raise NotFoundError(exception)
+    
+    user["contacts"] = [str(x) for x in user["contacts"]]
     
     return user
 
