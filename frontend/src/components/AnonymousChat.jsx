@@ -10,6 +10,7 @@ export default function AnonymousChat(props) {
     // parameters ("dc" for disconnected modal and leave if empty for normal one)
     
     const [otherUser, setOtherUser] = useState(null)
+    const [anonId, setAnonId] = useState(null);
     const [messages, setMessages] = useState([])
     const [dcStatus, setDcStatus] = useState(false)
 
@@ -18,17 +19,18 @@ export default function AnonymousChat(props) {
     // Fetching messages
     useEffect(() => {
         const fetchMessages = async () => {
+        //   console.log(otherUser)
           if (otherUser != null) {
             try {
                 const response = await fetch(apiRoot + '/message/get?'  + new URLSearchParams({
                     from_id: props.thisUser,
-                    to_id: otherUser,
-                    //TODO: anon: true,
+                    to_id: otherUser._id,
+                    anon: anonId,
                     // timestamp: messages.length>0?null:messages[messages.length-1].timestamp //TODO: Optimize to use after condition, adjust to have from_id and to_id
                 }).toString());
                 const data = await response.json();
                 if (response.status == 200) 
-                    if (data.message_list.length > 0) setMessages(data);
+                    setMessages(data);
             } catch (error) {
                 console.error('Error fetching data:', error);
           }}
@@ -38,29 +40,35 @@ export default function AnonymousChat(props) {
         const interval = setInterval(fetchMessages, 1000);
     
         return () => clearInterval(interval);
-    }, []);
+    }, [otherUser, anonId]);
 
     useEffect(() => {
         let matched = false
         const matchMake = async () => {
             try {
                 const response = await fetch(apiRoot + '/matchmake', {method: "POST"});
-                const id = await response.json().userid;
                 if (response.status == 200) {
-                    let response = await fetch(`${apiRoot}/user/${id}`)
-                    const otherUser = await response.json()
+                    let response_json = await response.json()
+                    let other_user_id = response_json.to_id==props.thisUser?response_json.from_id:response_json.to_id
+                    matched = true
+                    
+                    const OtherUserData = await (await fetch(`${apiRoot}/user/${other_user_id}`)).json()
+                    setOtherUser(OtherUserData)
+                    setAnonId(response_json._id)
                 }
                 else if (response.status != 420) throw Error(`Code: ${response.status}`)
             } catch (error) {
 
                 console.error('Error trying to match make:', error);
             }
+
+            if (!matched) {
+                setTimeout(matchMake, 1000)
+            }
         }
         
         matchMake();
-        const interval = setInterval(matchMake, 1000);
-
-        if (!matched) return () => clearInterval(interval);
+        
     }, []);
 
     async function sendMessage() {
@@ -69,12 +77,13 @@ export default function AnonymousChat(props) {
         input.value = ""
         if (input_val != "") fetch(apiRoot + '/message/create', {
             method:"POST",
+            headers: new Headers({'content-type': 'application/json'}),
             body: JSON.stringify({
             from_id: thisUser, // TODO: Need logged in users info
-            to_id: otherUser,
+            to_id: otherUser._id,
             message: input_val,
             timestamp: Date.now(),
-            // TODO: anon: true
+            anon: anonId
         })
     })}
 
@@ -93,7 +102,7 @@ export default function AnonymousChat(props) {
 
     function anonModal(state) {
         return <div className="mb-4 text-center font-bold text-indigo-700 flex flex-col">
-            {state == "dc" ? <h1 className="text-indigo-400">The other person disconnected, you may close the window.</h1> : <div><h1>Finding someone for you to talk to</h1><p className="font-normal text-black mb-4">Please be patient ^_^</p></div>}
+            {state == "dc" ? <h1 className="text-indigo-400">The other person disconnected, you may close the window.</h1> : <div><h1>Finding someone for you to talk to</h1><p className="font-normal text-black dark:texxt-white mb-4">Please be patient ^_^</p></div>}
             <div className="flex justify-center"role="status">
                 <svg aria-hidden="true" class="w-8 h-8 text-gray-100 animate-spin dark:text-gray-200 fill-indigo-800" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -105,10 +114,10 @@ export default function AnonymousChat(props) {
     }
 
     const thisUser = props.thisUser
-    const messageElements = createMessageComponenets(messages, thisUser, revealed?otherUser:"Anonymous", '/profile.png')
+    const messageElements = createMessageComponenets(messages, thisUser, revealed?otherUser.username:"Anonymous", '/profile.png')
 
     return (
-        <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div className="relative z-20" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             {/* For making background blur */}
             <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
             {/* Buttons */}
@@ -118,7 +127,7 @@ export default function AnonymousChat(props) {
                         <div className="dark:bg-stone-800 dark:text-white flex flex-col bg-gray-50 px-4 py-3 sm:flex sm:flex-col sm:px-6">
                             <div className="flex justify-between">
                                 <div className="mr-16"></div>
-                                <div className="font-bold">{revealed?otherUser:"Anonymous"}</div>
+                                <div className="font-bold">{revealed?otherUser.username:"Anonymous"}</div>
                                 <div>
                                     <button onClick={proposeReveal} type="button" className="dark:bg-stone-800 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
                                     <button onClick={async () => {props.close();await disconnect()}} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>

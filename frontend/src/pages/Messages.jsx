@@ -100,7 +100,6 @@ async function Messages(props) {
     }
 
     const contactElements = contacts.map((contact) => {
-      console.log(currentChat, contact._id)
       const style = currentChat==contact._id ? " dark:bg-zinc-700 bg-gray-100" : ""
         return (
             <button
