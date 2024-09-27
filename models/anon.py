@@ -34,7 +34,7 @@ except Exception as e:
 anon_Schema = {
     "$jsonSchema": {
         "bsonType": "object",
-        "required": ["from_id", "to_id", "messages"],
+        "required": ["from_id", "to_id", "messages", "reveal"],
         "properties": {
             "from_id": {
                 "bsonType": "objectId",

@@ -36,7 +36,7 @@ except Exception as e:
 message_Schema = {
     "$jsonSchema" : {
         "bsonType": "object",
-        "required": ["from_id", "to_id", "message", "timestamp"],
+        "required": ["from_id", "to_id", "message", "timestamp", "anon"],
         "properties": {
             "from_id": {
                 "bsonType": "objectId",

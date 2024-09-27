@@ -37,7 +37,7 @@ except Exception as e:
 users_Schema = {
     "$jsonSchema" :{
         "bsonType": "object",
-        "required": ["username", "email", "gender", "pfp", "OAuth"],
+        "required": ["username", "email", "pfp", "contacts"],
         "properties": {
             "username": {
                 "bsonType": "string",
