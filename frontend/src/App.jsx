@@ -26,7 +26,7 @@ export default function App() {
           <Route path="messages" element={
             <Suspense fallback={<div>Loading...</div>}>
                 <Await
-                    resolve={MessageWrapper()}
+                    resolve={MessageWrapper().catch((err) => console.log(err))}
                     errorElement={<div>Could not load user details ?</div>}
                     children={(element) => {return <div>{element}</div>;}}
                 />

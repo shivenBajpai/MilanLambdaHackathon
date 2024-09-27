@@ -9,9 +9,14 @@ export default async function AnonymousChat(props) {
     // Using the same layout for both disconnected and finding person modal, just change fucntion
     // parameters ("dc" for disconnected modal and leave if empty for normal one)
     
-    const [otherUser, setOtherUser] = useState(null)
-    const [messages, setMessages] = useState([])
-    const [dcStatus, setDcStatus] = useState(false)
+    // const [otherUser, setOtherUser] = useState("")
+    // const [messages, setMessages] = useState([])
+    // const [dcStatus, setDcStatus] = useState(false)
+
+    const otheUser = ""
+    const messages = []
+    const dcStatus = false
+
 
     let revealed = false;
     
@@ -75,11 +80,11 @@ export default async function AnonymousChat(props) {
         })
     })}
 
-    async function proposeReveal() {
+    function proposeReveal() {
         
     }
 
-    async function disconnect() {
+    function disconnect() {
         setDcStatus(false);
     }
 
@@ -123,7 +128,7 @@ export default async function AnonymousChat(props) {
                                     <button onClick={async () => {props.close();await disconnect()}} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
                                 </div>
                             </div>
-                            {otherUser ? (
+                            {false ? (
                                 <div>
                                     <div className="px-6 pb-4">
                                         <div className="flex flex-col-reverse space-y-1 mt-4 -mx-2 h-96 overflow-y-auto scrollbar-indigo">
