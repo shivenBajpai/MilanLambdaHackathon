@@ -235,7 +235,7 @@ def reveal_anon(anon_id:str, userid: str):
         exception = "Convo ID not found"
         raise NotFoundError(exception)
 
-    userid = objectId(userid)
+    userid = ObjectId(userid)
 
     if(userid not in [anon_entry["from_id"], anon_entry["to_id"]]):
         exception = "User ID not in current convo"

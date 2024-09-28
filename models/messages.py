@@ -256,7 +256,20 @@ def get_message(from_id:str, to_id:str, anon=None, timestamp=None):
             return_object["anon_list"].append(str(i["_id"]))
             
     else:
-        return_object = list(message_list_sorted)
+
+        reveal = anon_event["reveal"]
+
+        if reveal == 1:
+            reveal = str(anon_event["from_id"])
+        elif reveal == 2:
+            reveal = str(anon_event["to_id"])
+        elif reveal == 3:
+            reveal = 1
+
+        return_object = {
+            "message_list": message_list_sorted,
+            "reveal": reveal
+        }
 
     return return_object  
 
