@@ -315,6 +315,6 @@ def get_anon_dict(id:str):
     anon_entry["_id"] = str(anon_entry["_id"])
 
     for index,i in enumerate(anon_entry["messages"]):
-        anon_entry["message"][index] = str(i)
+        anon_entry["messages"][index] = str(i)
     
     return anon_entry

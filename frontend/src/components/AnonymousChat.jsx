@@ -12,9 +12,8 @@ export default function AnonymousChat(props) {
     const [otherUser, setOtherUser] = useState(null)
     const [anonId, setAnonId] = useState(null);
     const [messages, setMessages] = useState([])
+    const [revealStatus, setRevealStatus] = useState(0)
 
-    let revealed = false;
-    
     // Fetching messages
     useEffect(() => {
         const fetchMessages = async () => {
@@ -29,7 +28,14 @@ export default function AnonymousChat(props) {
                 }).toString());
                 const data = await response.json();
                 if (response.status == 200) 
-                    setMessages(data);
+                    setMessages(data.message_list);
+                    if (revealStatus != data.reveal) {
+                        setRevealStatus(data.reveal)
+                        if (data.reveal == 1) {
+                            props.close()
+                            // TODO: Need to change focused contact.
+                        }
+                    }
             } catch (error) {
                 console.error('Error fetching data:', error);
           }}
@@ -39,7 +45,7 @@ export default function AnonymousChat(props) {
         const interval = setInterval(fetchMessages, 1000);
     
         return () => clearInterval(interval);
-    }, [otherUser, anonId]);
+    }, [otherUser, anonId, revealStatus]);
 
     useEffect(() => {
         let matched = false
@@ -78,7 +84,7 @@ export default function AnonymousChat(props) {
             method:"POST",
             headers: new Headers({'content-type': 'application/json'}),
             body: JSON.stringify({
-            from_id: thisUser,
+            from_id: props.thisUser,
             to_id: otherUser._id,
             message: input_val,
             timestamp: Date.now(),
@@ -87,7 +93,7 @@ export default function AnonymousChat(props) {
     })}
 
     async function proposeReveal() {
-        
+        await fetch(`${apiRoot}/reveal/${anonId}`, { method: "POST" })
     }
 
     function handleKeyDown(e) {
@@ -109,7 +115,17 @@ export default function AnonymousChat(props) {
     }
 
     const thisUser = props.thisUser
-    const messageElements = createMessageComponenets(messages, thisUser, revealed?otherUser.username:"Anonymous", '/profile.png')
+    const messageElements = createMessageComponenets(messages, thisUser, "Anonymous", '/profile.png')
+
+    let topTextElement = <div className="font-bold">Anonymous</div>
+
+    if (otherUser != null) {    
+        if (revealStatus == otherUser._id) {
+            topTextElement = <div className="font-bold dark:text-red-400 text-red-700">The other person has requested a reveal identities</div>
+        } else if (revealStatus == props.thisUser) {
+            topTextElement = <div className="font-bold dark:text-green-400 text-green-700">You have proposed a reveal of identities</div>
+        }
+    }
 
     return (
         <div className="relative z-20" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -122,9 +138,9 @@ export default function AnonymousChat(props) {
                         <div className="dark:bg-stone-800 dark:text-white flex flex-col bg-gray-50 px-4 py-3 sm:flex sm:flex-col sm:px-6">
                             <div className="flex justify-between">
                                 <div className="mr-16"></div>
-                                <div className="font-bold">{revealed?otherUser.username:"Anonymous"}</div>
+                                {topTextElement}
                                 <div>
-                                    <button onClick={proposeReveal} type="button" className="dark:bg-stone-800 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
+                                    <button onClick={proposeReveal} type="button" disabled={otherUser == null} className="dark:bg-stone-800 disabled:bg-gray-600 dark:text-white mr-1 mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Reveal</button>
                                     <button onClick={props.close} type="button" className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">X</button>
                                 </div>
                             </div>
