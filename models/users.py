@@ -212,3 +212,25 @@ def get_contacts(id:str):
         return_object.append(contacted_user)
 
     return return_object
+
+#SEARCH THE ENTIRE USER LIST FOR THE INPUTTED STRING IN SEARCH BAR
+#TAKES INPUT AS THE USER ID AND THE STRING TO FILTER NAMES
+#RETURNS LIST OF DICTIONARIES
+
+def search_user(id: str, content:str):
+    
+    user = users.find_one({
+        "_id": ObjectId(id)
+    })
+
+    if(not user):
+        exception = f"Couldn't find any user with id: {id}"
+        raise NotFoundError(exception)
+    
+    search_list = list(users.find())
+
+    for index,i in enumerate(search_list):
+        search_list[index]["_id"] = str(i["_id"])
+        search_list[index]["contacts"] = []
+    
+    return search_list

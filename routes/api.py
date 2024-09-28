@@ -68,7 +68,18 @@ def delete_user(user_id: str):
         return {"ok": "ok"}
     except Exception as e:
         return {"err": str(e)}, 500
+    
+@api.route('/user/search/<user_id>', methods=['GET'])
+@require_auth
+def search_user(user_id:str):
+    if user_id != request.cookies.get('userid'):
+        return {"err": "Unauthorized"}, 401
 
+    try:
+        search_list = users.search_user(user_id, request.data)
+        return search_list
+    except Exception as e:
+        return {"err" : str(e)}, 500
 
 # CRUD Methods for message
 
@@ -82,7 +93,6 @@ def create_message():
     try: 
         return messages.add_message(data)
     except Exception as e:
-        raise e
         return {"err": str(e)}, 500
 
 @api.route('/message/get', methods=['GET'])
