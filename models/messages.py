@@ -5,8 +5,9 @@ from pymongo.server_api import ServerApi
 from datetime import datetime
 from bson.objectid import ObjectId
 import pytz
+from os import environ
 
-uri = "mongodb+srv://aritron1806:Am180906@cluster0.s15oq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&authSource=admin"
+uri = environ.get('MONGO_URL')
 
 #CREATE DB CLIENT CONNECTION
 

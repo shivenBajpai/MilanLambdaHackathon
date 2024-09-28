@@ -2,6 +2,7 @@ from authlib.integrations.flask_client import OAuth
 from flask import url_for, Blueprint, redirect, request
 from models import users
 import requests
+from os import environ
 #Authlib
 
 oauth = OAuth()
@@ -18,8 +19,8 @@ google = oauth.register(
   access_tokens_params=None,
   authorize_params=None,
   # Collect client_id and client secret from google auth api  
-  client_id= "245515350791-2r5d6ptj9h4ava8ujeledkj644aamurf.apps.googleusercontent.com",
-  client_secret = "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",
+  client_id= environ.get('OAUTH_CLIENT_ID'),
+  client_secret = environ.get('OAUTH_CLIENT_SECRET'),
   client_kwargs={
     'scope': 'email profile'
   }
@@ -31,7 +32,13 @@ def google_login():
     redirect_uri = url_for('auth.authorize', _external=True)
     google = oauth.create_client('google')
     #then return the user to authorized login page of google
-    return google.authorize_redirect(redirect_uri)
+    resp = google.authorize_redirect(redirect_uri)
+    
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    resp.headers['Cache-Control'] = 'public, max-age=0' 
+    return resp
 
 
 @auth.route('/logout')
@@ -42,8 +49,14 @@ def logout():
     resp = redirect("/") 
     if userid in oauth.logged_in and oauth.logged_in.get(userid) == token:
         del oauth.logged_in['userid']
-        resp.set_cookie('userid', '', expires=0)
-        resp.set_cookie('token', '', expires=0)
+
+    resp.delete_cookie('userid')
+    resp.delete_cookie('token')
+
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    resp.headers['Cache-Control'] = 'public, max-age=0' 
     
     return resp
 

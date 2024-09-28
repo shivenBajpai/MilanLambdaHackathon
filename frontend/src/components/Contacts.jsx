@@ -39,6 +39,7 @@ export default function Contacts(props) {
                         currentTarget.src="/profile.png";
                     }}/>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
+                <a href="/logout"><button className="ml-2 text-sm font-semibold">Logout</button></a>
                 {/* Unread messages */}
                 {/* <div
                 className="flex items-center justify-center ml-auto text-xs text-white bg-indigo-500 h-4 w-4 rounded leading-none"

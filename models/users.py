@@ -3,8 +3,9 @@
 from pymongo import MongoClient, errors
 from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
+from os import environ
 
-uri = "mongodb+srv://aritron1806:Am180906@cluster0.s15oq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&authSource=admin"
+uri = environ.get('MONGO_URL')
 
 #CREATE CONNECTION TO DB
 

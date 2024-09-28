@@ -1,6 +1,9 @@
-#IMPORTS
+from dotenv import load_dotenv
+load_dotenv()
 
+#IMPORTS
 from flask import Flask,Blueprint,render_template,request
+from os import environ
 
 #IMPORT ROUTES
 
@@ -13,7 +16,7 @@ from routes.base import base
 #CREATING OUR APP
 
 app = Flask(__name__)
-app.secret_key = "something random"
+app.secret_key = environ.get('SECRET_KEY')
 
 oauth.init_app(app)
 

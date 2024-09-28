@@ -10,3 +10,4 @@ Flask-PyMongo
 pytz
 authlib
 requests
+python-dotenv

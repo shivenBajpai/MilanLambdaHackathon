@@ -30,10 +30,18 @@ npm install
 npm run build
 ```
 
+Create a file called `.env` with the following secrets:
+```
+MONGO_URL = "mongodb url"
+OAUTH_CLIENT_SECRET = "oauth client secret" 
+OAUTH_CLIENT_ID = "oauth client id" 
+SECRET_KEY = "secret key"
+```
+
 Start the server with
 
 ```
-flask run
+gunicorn app:app -b 0.0.0.0:5000
 ```
 
 Then open https://localhost:5000 in your browser.
