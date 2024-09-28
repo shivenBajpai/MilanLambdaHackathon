@@ -11,7 +11,7 @@ def require_auth(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # Use in testing
-        return f(*args, **kwargs)
+        # return f(*args, **kwargs)
 
         userid = request.cookies.get('userid', None)
         token = request.cookies.get('token', None)
