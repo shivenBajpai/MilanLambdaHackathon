@@ -227,7 +227,17 @@ def search_user(id: str, content:str):
         exception = f"Couldn't find any user with id: {id}"
         raise NotFoundError(exception)
     
-    search_list = list(users.find())
+    search_output = list(users.find({
+        "_id": {
+            "$ne": ObjectId(id)
+        },
+        "username": {
+            "$regex": content,
+            "$options": "i"
+        }
+    }))
+
+    search_list = sorted(search_output, key=lambda d:d['username'])
 
     for index,i in enumerate(search_list):
         search_list[index]["_id"] = str(i["_id"])
