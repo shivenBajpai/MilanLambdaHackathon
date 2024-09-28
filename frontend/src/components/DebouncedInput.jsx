@@ -41,7 +41,7 @@ const DebouncedInput = (props) => {
   const searchElements = searchResults.map((contact) => {
     return (
         <button
-            className={"flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" } onClick={() => {props.changeCurrentChat(contact._id)}}
+            className={"flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" } onClick={() => {setSearchResults([]); props.changeCurrentChat(contact._id)}}
         >
             <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" crossOrigin="anonymous" src={contact.pfp}></img>
             <div className="ml-2 text-sm font-semibold">{contact.username}</div>
@@ -67,7 +67,7 @@ const DebouncedInput = (props) => {
         />
       </div>
       {searchElements.length != 0 && (
-      <div className="flex flex-grow flex-col space-y-1 mt-4 -mx-2 h-64 overflow-y-auto scrollbar-indigo">
+      <div className="flex flex-grow flex-col space-y-1 mt-4 -mx-2 h-20 overflow-y-auto scrollbar-indigo">
         {searchElements}
       </div>
       )}

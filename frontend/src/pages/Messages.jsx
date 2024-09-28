@@ -158,7 +158,7 @@ async function Messages(props) {
                     >
                   </div>
                   {/* User profiles */}
-                  <div className="flex flex-grow flex-col space-y-1 mt-4 -mx-2 h-64 overflow-y-auto scrollbar-indigo">
+                  <div className="flex flex-grow flex-col space-y-1 mt-4 -mx-2 h-32 overflow-y-auto scrollbar-indigo">
                     {contactElements}
                   </div>
                   {/* Button to chat with random person */}
