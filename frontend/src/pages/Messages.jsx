@@ -158,9 +158,9 @@ async function Messages(props) {
                 <div className="dark:bg-stone-800 dark:text-zinc-50 flex flex-col py-8 pl-6 pr-2 w-full md:w-64 h-full flex-shrink-0 -md:absolute left-0 top-0 z-10">
                     <div className="flex flex-row items-center justify-center h-12 w-full">
                         <div className="flex items-center justify-center rounded-2xl text-indigo-700 bg-transparent h-10 w-10">
-                            <img src="/logo.png" alt="IPHAC Logo" />
+                            <img src="/logo.svg" alt="Anonymia Logo" />
                         </div>
-                        <div className="ml-2 font-bold text-2xl">IPHAC</div>
+                        <div className="ml-2 font-bold text-2xl">Anonymia</div>
                     </div>
 
                     {/* User Profile Section */}

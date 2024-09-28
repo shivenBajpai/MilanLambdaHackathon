@@ -2,8 +2,8 @@ import { Link } from "react-router-dom"; // Importing Link for navigation betwee
 import { MessageCircle, Users, Shield } from "lucide-react"; // Importing icons from lucide-react
 
 /**
- * Home component renders the main landing page for the IPHAC application.
- * It includes sections for the app's branding, features, how it works, and about IPHAC.
+ * Home component renders the main landing page for the Anonymia application.
+ * It includes sections for the app's branding, features, how it works, and about Anonymia.
  *
  * @returns {JSX.Element} The rendered Home component.
  */
@@ -12,8 +12,8 @@ export default function Home() {
         <div className="dark:text-zinc-50 flex min-h-full flex-col justify-center text-center">
             {/* Header Section */}
             <div className="mt-10 flex flex-row justify-center content-center">
-                <img className="w-20" src="logo.png" alt="IPHAC Logo" /> {/* Application Logo */}
-                <h1 className="text-6xl my-auto">IPHAC</h1> {/* Application Name */}
+                <img className="w-20" src="logo.svg" alt="Anonymia Logo" /> {/* Application Logo */}
+                <h1 className="font-bold text-6xl my-auto">Anonymia</h1> {/* Application Name */}
             </div>
 
             {/* Introduction Section */}
@@ -21,7 +21,7 @@ export default function Home() {
                 <h1 className="font-bold text-6xl mb-8">Connect with Your College Peers</h1>
                 <h1 className="text-indigo-500 text-2xl">Connect with new people</h1>
                 <p className="mt-4 text-gray-400">
-                    IPHAC pairs you with random students from your college who are online.<br />
+                    Anonymia pairs you with random students from your college who are online.<br />
                     Identities are kept anonymous until both sides agree to reveal.<br />
                     Chat, make friends, and expand your network!
                 </p>
@@ -82,11 +82,11 @@ export default function Home() {
                 </div>
             </div>
 
-            {/* About IPHAC Section */}
+            {/* About Anonymia Section */}
             <div className="mx-10 rounded-lg flex flex-col justify-center py-32 bg-indigo-700 text-center text-white">
-                <h1 className="font-black text-4xl">About IPHAC</h1>
+                <h1 className="font-black text-4xl">About Anonymia</h1>
                 <p className="my-3">
-                    IPHAC is designed to allow you to meet a random mix of people you wouldn't normally meet in your day-to-day campus life.<br />
+                    Anonymia is designed to allow you to meet a random mix of people you wouldn't normally meet in your day-to-day campus life.<br />
                     Our platform provides a safe, user-friendly, and engaging way to meet new people.<br />
                 </p>
                 <div className="my-3">
@@ -100,10 +100,7 @@ export default function Home() {
             {/* Footer Section */}
             <div className="mx-10 flex flex-row py-4 text-left justify-between">
                 <p className="px-3 font-bold">
-                    Copyright Notice
-                </p>
-                <p className="px-3 font-bold">
-                    Terms of Service Link
+                    Copyright &copy; The Anonymia Authors, 2024
                 </p>
             </div>
         </div>
