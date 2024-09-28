@@ -86,6 +86,12 @@ async function Messages(props) {
                 let response = await fetch(`${apiRoot}/user/${props.User_id}`); // Fetch user data
                 if (response.status == 200) {
                     let new_contacts_ids = (await response.json()).contacts; // Extract contacts
+
+                    // Manually Insert contact to make UI seem more responsive when moving from an anonymous chat to a DM.
+                    if (currentChat != null && !(new_contacts_ids.includes(currentChat))) {
+                      new_contacts_ids.push(currentChat)
+                    }
+
                     let new_contacts = [];
 
                     // Fetch each contact's information
