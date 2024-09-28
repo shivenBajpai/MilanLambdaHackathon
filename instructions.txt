@@ -1,5 +1,0 @@
-ALL ROUTES OF THE APP ARE TO GO INTO SEPARATE FILES INSIDE ROUTES FOLDER FOR MODULARITY
-Please follow the basic example in app.py and base.py
-All HTML templates will go into templates FOLDER
-All CSS to go into styles FOLDER
-All JS scripts to go into scripts FOLDER

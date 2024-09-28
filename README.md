@@ -41,7 +41,7 @@ SECRET_KEY = "secret key"
 Start the server with
 
 ```
-gunicorn app:app -b 0.0.0.0:5000
+flask run
 ```
 
 Then open https://localhost:5000 in your browser.

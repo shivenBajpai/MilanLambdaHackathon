@@ -183,7 +183,7 @@ export default function AnonymousChat(props) {
                     </div>
                     {/* Messages section */}
                     <div className="flex flex-col h-96 overflow-y-auto px-2 py-4">
-                        {messages.length > 0 ? messageElements : anonModal("waiting")}
+                        {otherUser ? messageElements : anonModal("waiting")}
                     </div>
                     {/* Input section for sending messages */}
                     <div className="flex mt-4">
