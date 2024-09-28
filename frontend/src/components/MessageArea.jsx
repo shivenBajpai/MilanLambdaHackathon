@@ -63,6 +63,7 @@ export default function MessageArea(props) {
               type="text"
               className="dark:bg-stone-800 dark:text-white flex w-full border dark:border-gray-600 rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
               onKeyDown={props.handleKeyDown}
+              disabled={props.currentChat == null?true:false}
             />
             {/* THIS WAS THE EMOJI ICON <button
               className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
@@ -86,7 +87,9 @@ export default function MessageArea(props) {
         </div>
         <div className="ml-4">
           <button
-            className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0" onClick={props.sendMessage}
+            className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl disabled:bg-gray-600 text-white px-4 py-1 flex-shrink-0" 
+            onClick={props.sendMessage}
+            disabled={props.currentChat == null?true:false}
           >
             <span>Send</span>
             <span className="ml-2">
