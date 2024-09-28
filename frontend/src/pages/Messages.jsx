@@ -100,7 +100,9 @@ async function Messages(props) {
       }
     }
 
-
+    function chatChangeCallback(user_id) {
+      changeCurrentChat(user_id)
+    }
 
     const contactElements = contacts.map((contact) => {
       const style = currentChat==contact._id ? " dark:bg-zinc-700 bg-gray-100" : ""
@@ -122,7 +124,7 @@ async function Messages(props) {
 
 
     return <div className="flex h-screen antialiased text-gray-900">
-            {AnonymousChatOpen && <AnonymousChat thisUser={props.User_id} close={() => toggleAnonymousChatOpen(false)}></AnonymousChat>}
+            {AnonymousChatOpen && <AnonymousChat thisUser={props.User_id} close={() => toggleAnonymousChatOpen(false)} chatChangeCallback={chatChangeCallback}></AnonymousChat>}
             <div className="md:flex flex-row h-full w-full overflow-x-hidden">
               <div className="dark:bg-stone-800 dark:text-zinc-50 flex flex-col py-8 pl-6 pr-2 w-full md:w-64 h-full flex-shrink-0 -md:absolute left-0 top-0 z-10">
                 <div className="flex flex-row items-center justify-center h-12 w-full">

@@ -26,7 +26,6 @@ export default function MessageArea(props) {
             const data = await response.json();
             if (response.status == 200) {
               setMessages(data.message_list);
-              // TODO: Anon conversatio   ns list
             } else throw Error(`Code ${response.status}`)
           } catch (error) {
             console.error('Error fetching messages:', error);

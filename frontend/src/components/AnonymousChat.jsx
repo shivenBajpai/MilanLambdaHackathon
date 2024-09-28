@@ -32,8 +32,8 @@ export default function AnonymousChat(props) {
                     if (revealStatus != data.reveal) {
                         setRevealStatus(data.reveal)
                         if (data.reveal == 1) {
+                            props.chatChangeCallback(otherUser._id)
                             props.close()
-                            // TODO: Need to change focused contact.
                         }
                     }
             } catch (error) {
