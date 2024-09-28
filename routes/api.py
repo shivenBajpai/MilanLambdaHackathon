@@ -12,10 +12,10 @@ def require_auth(f):
     def decorated_function(*args, **kwargs):
         # Use in testing
         return f(*args, **kwargs)
-        
+
         userid = request.cookies.get('userid', None)
         token = request.cookies.get('token', None)
-        
+
         if userid in oauth.logged_in and oauth.logged_in.get(userid) == token:
             return f(*args, **kwargs)
         return {"err": "Unauthorized"}, 401
@@ -34,7 +34,7 @@ def create_user():
 
 @api.route('/user/<user_id>', methods=['GET'])
 @require_auth
-def get_user(user_id: str): 
+def get_user(user_id: str):
     try:
         user = users.get_user(user_id)
         user['_id'] = str(user['_id'])
@@ -68,7 +68,7 @@ def delete_user(user_id: str):
         return {"ok": "ok"}
     except Exception as e:
         return {"err": str(e)}, 500
-    
+
 @api.route('/user/search/<user_id>', methods=['GET'])
 @require_auth
 def search_user(user_id:str):
@@ -90,7 +90,7 @@ def create_message():
     if data.get('from_id') != request.cookies.get('userid'):
         return {"err": "Unauthorized"}, 401
 
-    try: 
+    try:
         return messages.add_message(data)
     except Exception as e:
         return {"err": str(e)}, 500
@@ -139,7 +139,7 @@ def create_anon():
 
 @api.route('/anon/<anon_id>', methods=['GET'])
 @require_auth
-def get_anon(anon_id: str): 
+def get_anon(anon_id: str):
     try:
         convo = anon.get_anon(anon_id)
         convo['_id'] = str(convo['_id'])
@@ -149,7 +149,7 @@ def get_anon(anon_id: str):
 
 @api.route('/anon/<anon_id>/<message_id>', methods=['PUT'])
 @require_auth
-def anon_add_message(anon_id: str, message_id: str): 
+def anon_add_message(anon_id: str, message_id: str):
     try:
         userid = request.cookies.get('userid')
         convo = anon.get_anon(anon_id)
@@ -176,7 +176,7 @@ to_be_informed = {}
 
 @api.route('/matchmake', methods=['POST'])
 @require_auth
-def matchmake(): 
+def matchmake():
     global queue
     print(queue)
     user1 = request.cookies.get('userid')
@@ -185,7 +185,7 @@ def matchmake():
         anon_id = to_be_informed[user1]
         del to_be_informed[user1]
         convo = anon.get_anon_dict(anon_id)
-        return convo 
+        return convo
 
     if not queue:
         queue.append(user1)

@@ -3,14 +3,15 @@ import React, { useEffect, useState } from "react"
 import createMessageComponenets from "../util/util"
 import { Navigate } from "react-router-dom"
 import MessageArea from "../components/MessageArea"
+import DebouncedInput from "../components/DebouncedInput"
 
 export const apiRoot = "/api"
 
 export default async function MessageWrapper() {
     const User_id = document.cookie.split('; ').filter(row => row.startsWith('userid=')).map(c=>c.split('=')[1])[0]
-    
+
     if (User_id == undefined) return <Navigate to="/login" />
-    
+
     const messageElement = await Messages({User_id}).catch((err) => console.log(err));
     return <div>{messageElement}</div>
 }
@@ -65,17 +66,17 @@ async function Messages(props) {
           if (response.status == 200) {
             let new_contacts_ids = (await response.json()).contacts;
             let new_contacts = [];
-            
+
             for (const id of new_contacts_ids) {
               new_contacts.push(await (await fetch(`${apiRoot}/user/${id}`)).json())
             }
-            
+
             setContacts(new_contacts);
           }
 
         } catch (error) {
           console.error('Error fetching data:', error);
-          
+
         }
       };
 
@@ -99,6 +100,20 @@ async function Messages(props) {
       }
     }
 
+    async function searchUser (input) {
+        try {
+          const response = await fetch(apiRoot + '/user/search/' + props.User_id + "?" + new URLSearchParams({
+            input_field: input
+          }).toString())
+          const data = await response.json();
+          if (response.status == 200) {
+            console.log(data)
+          } else throw Error(`Code ${response.status}`)
+        } catch (error) {
+          console.error('Error fetching messages:', error);
+        }
+      };
+
     const contactElements = contacts.map((contact) => {
       const style = currentChat==contact._id ? " dark:bg-zinc-700 bg-gray-100" : ""
         return (
@@ -118,7 +133,7 @@ async function Messages(props) {
     })
 
     return <div className="flex h-screen antialiased text-gray-900">
-            {AnonymousChatOpen && <AnonymousChat thisUser={props.User_id} close={toggleAnonymousChatOpen}></AnonymousChat>}
+            {AnonymousChatOpen && <AnonymousChat thisUser={props.User_id} close={() => toggleAnonymousChatOpen(false)}></AnonymousChat>}
             <div className="md:flex flex-row h-full w-full overflow-x-hidden">
               <div className="dark:bg-stone-800 dark:text-zinc-50 flex flex-col py-8 pl-6 pr-2 w-full md:w-64 h-full flex-shrink-0 -md:absolute left-0 top-0 z-10">
                 <div className="flex flex-row items-center justify-center h-12 w-full">
@@ -144,6 +159,7 @@ async function Messages(props) {
                   <div className="text-xs text-gray-600 dark:text-gray-300">{User.email}</div>
                 </div>
                 <div className="flex flex-grow flex-col mt-8">
+                  <DebouncedInput searchUser={searchUser}></DebouncedInput>
                   <div className="flex flex-row items-center justify-between text-xs">
                     <span className="font-bold">Active DM's</span>
                     {/* Number of active dms of the user */}
