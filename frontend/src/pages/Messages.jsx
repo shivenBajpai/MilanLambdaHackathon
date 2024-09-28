@@ -135,7 +135,11 @@ async function Messages(props) {
                 className={"flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" + style}
                 onClick={() => { changeCurrentChat(contact._id) }} // Change current chat on click
             >
-                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" crossOrigin="anonymous" src={contact.pfp} alt="Contact Avatar" />
+                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" crossOrigin="anonymous" src={contact.pfp} 
+                    onError={({ currentTarget }) => {
+                        currentTarget.onerror = null; // prevents looping
+                        currentTarget.src="/profile.png";
+                    }}/>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
                 {/* Unread messages (commented out) */}
                 {/* <div
@@ -162,7 +166,11 @@ async function Messages(props) {
                     {/* User Profile Section */}
                     <div className="flex flex-col items-center bg-transparent mt-4 w-full py-6 px-4 rounded-lg">
                         <div className="h-20 w-20 rounded-full border overflow-hidden">
-                            <img crossOrigin="anonymous" src={User.pfp} alt="User Avatar" className="h-full w-full" />
+                            <img crossOrigin="anonymous" src={User.pfp} className="h-full w-full" 
+                                onError={({ currentTarget }) => {
+                                    currentTarget.onerror = null; // prevents looping
+                                    currentTarget.src="/profile.png";
+                            }}/>
                         </div>
                         <div className="text-sm font-semibold mt-2">{User.username}</div>
                         <div className="text-xs text-gray-600 dark:text-gray-300">{User.email}</div>

@@ -1,11 +1,9 @@
 import Login from "./pages/Login"
-import Signup from "./pages/Signup"
 import MessageWrapper from './pages/Messages'
 import Home from './pages/Home'
 import NoPage from './pages/404'
 import { BrowserRouter, Routes, Route, Outlet, Await } from "react-router-dom";
 import './App.css'
-import TopNav from "./components/Topnav.jsx";
 import { Suspense } from "react"
 
 function Layout() {
@@ -21,7 +19,6 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />}/>
           <Route path="login" element={<Login />}/>
-          <Route path="signup" element={<Signup />}/>
 
           <Route path="messages" element={
             <Suspense fallback={<div>Loading...</div>}>

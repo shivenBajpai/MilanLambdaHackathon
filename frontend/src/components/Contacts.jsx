@@ -33,7 +33,11 @@ export default function Contacts(props) {
                 className={"flex flex-row items-center dark:hover:bg-zinc-700 hover:bg-gray-100 rounded-xl p-2" + style}
                 onClick={() => props.changeCurrentChat(contact._id)}
             >
-                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" crossOrigin="anonymous" src={contact.pfp} alt={`${contact.username}'s profile`} />
+                <img className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 flex-shrink-0" crossOrigin="anonymous" src={contact.pfp} alt={`${contact.username}'s profile`}
+                     onError={({ currentTarget }) => {
+                        currentTarget.onerror = null; // prevents looping
+                        currentTarget.src="/profile.png";
+                    }}/>
                 <div className="ml-2 text-sm font-semibold">{contact.username}</div>
                 {/* Unread messages */}
                 {/* <div
