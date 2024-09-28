@@ -63,7 +63,7 @@ const DebouncedInput = (props) => {
           placeholder="Search users"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          className="ml-4 mb-2 dark:bg-transparent text:black dark:text-white border border-white"
+          className="ml-4 mb-4 p-2 rounded-full dark:bg-transparent text:black dark:text-white border border-gray-400"
         />
       </div>
       {searchElements.length != 0 && (
