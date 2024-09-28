@@ -208,5 +208,5 @@ def reveal(anon_id: str):
             return {"err": "Unauthorized"}, 401
         anon.reveal_anon(anon_id, userid)
         return {"ok": "ok"}
-    except e:
+    except Exception as e:
         {"err": str(e)}, 500
