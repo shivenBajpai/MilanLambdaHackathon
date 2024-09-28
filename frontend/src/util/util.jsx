@@ -49,9 +49,9 @@ export default function createMessageComponenets(messages, thisUser, other_user,
                 <div className={"col-start-6 col-end-13 rounded-lg" + spacing}>
                     <div className="flex items-center justify-start flex-row-reverse">
                         <div
-                            className="dark:text-white dark:bg-indigo-600 relative mr-3 text-md bg-indigo-400 py-2 px-4 shadow rounded-xl"
+                            className="max-w-xl dark:text-white dark:bg-indigo-600 relative mr-3 text-md bg-indigo-400 py-2 px-4 shadow rounded-xl"
                         >
-                            <div>{messages[i].message}
+                            <div className="text-wrap break-words">{messages[i].message}
                                 {((timeNext != timeThis) || messages[i+1]?.from_id != thisUser) && (
                                     <span><p className="text-end text-xs font-bold">{timeThis}</p></span>
                                 )}
@@ -75,9 +75,9 @@ export default function createMessageComponenets(messages, thisUser, other_user,
                         <div className="flex flex-row items-center">
                         {topUser && <img crossOrigin="anonymous" className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0" src={other_user_pfp}></img>}
                         <div
-                            className="dark:bg-stone-700 dark:text-white relative ml-3 text-md bg-white py-2 px-4 shadow rounded-xl"
+                            className="max-w-xl dark:bg-stone-700 dark:text-white relative ml-3 text-md bg-white py-2 px-4 shadow rounded-xl"
                         >
-                            <div>{messages[i].message}
+                            <div className="text-wrap break-words">{messages[i].message}
                                 {((timeNext != timeThis) || messages[i+1]?.from_id == thisUser) && (
                                     <span><p className="text-start text-xs font-bold">{timeThis}</p></span>
                                 )}
