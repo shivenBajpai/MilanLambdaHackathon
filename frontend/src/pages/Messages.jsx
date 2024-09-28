@@ -100,19 +100,7 @@ async function Messages(props) {
       }
     }
 
-    async function searchUser (input) {
-        try {
-          const response = await fetch(apiRoot + '/user/search/' + props.User_id + "?" + new URLSearchParams({
-            input_field: input
-          }).toString())
-          const data = await response.json();
-          if (response.status == 200) {
-            console.log(data)
-          } else throw Error(`Code ${response.status}`)
-        } catch (error) {
-          console.error('Error fetching messages:', error);
-        }
-      };
+
 
     const contactElements = contacts.map((contact) => {
       const style = currentChat==contact._id ? " dark:bg-zinc-700 bg-gray-100" : ""
@@ -131,6 +119,7 @@ async function Messages(props) {
             </button>
         )
     })
+
 
     return <div className="flex h-screen antialiased text-gray-900">
             {AnonymousChatOpen && <AnonymousChat thisUser={props.User_id} close={() => toggleAnonymousChatOpen(false)}></AnonymousChat>}
@@ -159,7 +148,7 @@ async function Messages(props) {
                   <div className="text-xs text-gray-600 dark:text-gray-300">{User.email}</div>
                 </div>
                 <div className="flex flex-grow flex-col mt-8">
-                  <DebouncedInput searchUser={searchUser}></DebouncedInput>
+                  <DebouncedInput changeCurrentChat={changeCurrentChat} User_id = {props.User_id}></DebouncedInput>
                   <div className="flex flex-row items-center justify-between text-xs">
                     <span className="font-bold">Active DM's</span>
                     {/* Number of active dms of the user */}

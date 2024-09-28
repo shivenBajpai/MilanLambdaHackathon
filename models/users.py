@@ -115,9 +115,9 @@ def get_user(id:str):
     if(not user):
         exception = f"Couldn't find any user with id: {id}"
         raise NotFoundError(exception)
-    
+
     user["_id"] = str(user["_id"])
-    
+
     user["contacts"] = [str(x) for x in user["contacts"]]
 
     return user
@@ -181,7 +181,7 @@ def get_user_by_email(email:str):
     if(not user):
         exception = f"Couldn't find any user with email: {email}"
         raise NotFoundError(exception)
-    
+
     user["contacts"] = [str(x) for x in user["contacts"]]
     user["_id"] = str(user["_id"])
 
@@ -218,7 +218,7 @@ def get_contacts(id:str):
 #RETURNS LIST OF DICTIONARIES
 
 def search_user(id: str, content:str):
-    
+    print(content)
     user = users.find_one({
         "_id": ObjectId(id)
     })
@@ -226,7 +226,7 @@ def search_user(id: str, content:str):
     if(not user):
         exception = f"Couldn't find any user with id: {id}"
         raise NotFoundError(exception)
-    
+
     search_output = list(users.find({
         "_id": {
             "$ne": ObjectId(id)
@@ -242,5 +242,5 @@ def search_user(id: str, content:str):
     for index,i in enumerate(search_list):
         search_list[index]["_id"] = str(i["_id"])
         search_list[index]["contacts"] = []
-    
+
     return search_list

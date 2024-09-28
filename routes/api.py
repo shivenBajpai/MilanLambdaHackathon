@@ -74,9 +74,8 @@ def delete_user(user_id: str):
 def search_user(user_id:str):
     if user_id != request.cookies.get('userid'):
         return {"err": "Unauthorized"}, 401
-
     try:
-        search_list = users.search_user(user_id, request.data)
+        search_list = users.search_user(user_id, request.args.get('input_field'))
         return search_list
     except Exception as e:
         return {"err" : str(e)}, 500
